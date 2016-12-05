@@ -12,6 +12,7 @@ class DrawingViewController: UIViewController {
 
     @IBOutlet weak var drawingImageView: UIImageView!
     @IBOutlet weak var topStackView: UIStackView!
+    @IBOutlet weak var brushSize: UIButton!
     
     private var currentColor: UIColor = ColorScheme.Black
     private var currentBrushSize: CGFloat = 10.0
@@ -108,9 +109,39 @@ class DrawingViewController: UIViewController {
     
     func setStrokeColor(color: UIColor) {
         currentColor = color
+        brushSize.titleLabel?.textColor = color
     }
     
     
+    @IBAction func changeColorTapped(_ sender: UIButton) {
+        switch sender.tag {
+        case 0:
+            setStrokeColor(color: ColorScheme.Red)
+        case 1:
+            setStrokeColor(color: ColorScheme.Orange)
+        case 2:
+            setStrokeColor(color: ColorScheme.Yellow)
+        case 3:
+            setStrokeColor(color: ColorScheme.Green)
+        case 4:
+            setStrokeColor(color: ColorScheme.Blue)
+        case 5:
+            setStrokeColor(color: ColorScheme.Purple)
+        default:
+            setStrokeColor(color: currentColor)
+        }
+    }
     
+    @IBAction func randomColor(_ sender: UIButton) {
+        
+    }
+    
+    @IBAction func redo(_ sender: UIButton) {
+        
+    }
+    
+    @IBAction func changeBrushSize(_ sender: UIButton) {
+        
+    }
 }
 
