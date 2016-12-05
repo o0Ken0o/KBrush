@@ -19,6 +19,8 @@ class DrawingViewController: UIViewController {
     private var firstPoint = CGPoint(x: 0, y: 0)
     private var secondPoint = CGPoint(x: 0, y: 0)
     
+    private var lastSeriesImages = [UIImage?]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -26,6 +28,7 @@ class DrawingViewController: UIViewController {
     // MARK: touches method
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         print("began")
+        lastSeriesImages.append(drawingImageView.image)
         UIView.animate(withDuration: 0.5) {
             self.topStackView.layer.opacity = 0.0
         }
@@ -133,15 +136,18 @@ class DrawingViewController: UIViewController {
     }
     
     @IBAction func randomColor(_ sender: UIButton) {
-        
+        print("randomColor")
     }
     
     @IBAction func redo(_ sender: UIButton) {
-        
+        if let last = lastSeriesImages.last {
+            drawingImageView.image = last
+            lastSeriesImages.removeLast()
+        }
     }
     
     @IBAction func changeBrushSize(_ sender: UIButton) {
-        
+        print("changeBrushSize")
     }
 }
 
