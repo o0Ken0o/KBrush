@@ -8,10 +8,15 @@
 
 import UIKit
 
+protocol GalleryViewControllerDelegate {
+    func selectedAMasterpiece(galleryVC: GalleryViewController, masterpiece: Masterpiece)
+}
+
 class GalleryViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var galleryTableView: UITableView!
     private var masterpieces = [Masterpiece]()
+    var delegate: GalleryViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,6 +28,11 @@ class GalleryViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
 
     //MARK: UITableViewDelegate
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        galleryTableView.deselectRow(at: indexPath, animated: true)
+        delegate?.selectedAMasterpiece(galleryVC: self, masterpiece: masterpieces[indexPath.row])
+        _ = self.navigationController?.popViewController(animated: true)
+    }
     
     //MARK: UITableViewDataSource
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -34,6 +44,9 @@ class GalleryViewController: UIViewController, UITableViewDelegate, UITableViewD
         let masterpiece = masterpieces[indexPath.row]
         if let image = masterpiece.image {
             cell.masterpieceImageView.image = UIImage(data: image as Data)
+            cell.masterpieceImageView.layer.borderColor = UIColor.gray.cgColor
+            cell.masterpieceImageView.layer.borderWidth = 2.0
+            cell.masterpieceImageView.backgroundColor = UIColor.white
         }
         cell.masterpieceNameLabel.text = masterpiece.name
         return cell

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class DrawingViewController: UIViewController {
+class DrawingViewController: UIViewController, GalleryViewControllerDelegate {
 
     @IBOutlet weak var drawingImageView: UIImageView!
     @IBOutlet weak var topStackView: UIStackView!
@@ -21,7 +21,12 @@ class DrawingViewController: UIViewController {
     
     private var lastSeriesImages = [UIImage?]()
     
-    var currentMasterPiece: Masterpiece?
+    var currentMasterPiece: Masterpiece? {
+        didSet {
+            self.drawingImageView.image = UIImage(data: (currentMasterPiece?.image as! Data))
+            self.title = currentMasterPiece?.name
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,6 +37,18 @@ class DrawingViewController: UIViewController {
         if let masterpiece = currentMasterPiece {
             self.title = masterpiece.name
         }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "GalleryViewController" {
+            let galleryVC = segue.destination as! GalleryViewController
+            galleryVC.delegate = self
+        }
+    }
+    
+    // MARK: GalleryViewControllerDelegate
+    func selectedAMasterpiece(galleryVC: GalleryViewController, masterpiece: Masterpiece) {
+        self.currentMasterPiece = masterpiece
     }
     
     // MARK: touches method
@@ -142,8 +159,14 @@ class DrawingViewController: UIViewController {
     }
     
     func shareMasterPiece() {
-        // if saving to photo library, permission must be asked explicitly beforehand
         print("share button tapped")
+        // if the masterpiece is not saved yet, warn the user
+        if let masterpiece = currentMasterPiece {
+            let activityController = UIActivityViewController(activityItems: [masterpiece.image!], applicationActivities: nil)
+            // if saving to photo library, permission must be asked explicitly beforehand
+            // if the users say no, we should ask them to change to settings
+            present(activityController, animated: true, completion: nil)
+        }
     }
     
     func drawALine(first: CGPoint, second: CGPoint) {
@@ -190,7 +213,10 @@ class DrawingViewController: UIViewController {
     }
     
     @IBAction func randomColor(_ sender: UIButton) {
-        print("randomColor")
+        let random = ColorScheme.Random
+        print(random)
+        setStrokeColor(color: random)
+        print("currentColor:\(currentColor)")
     }
     
     @IBAction func redo(_ sender: UIButton) {
