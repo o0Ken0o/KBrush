@@ -20,9 +20,9 @@ class ColorScheme {
     
     static var Random: UIColor {
         get {
-            let red = CGFloat(arc4random_uniform(255)) / 255.0
-            let green = CGFloat(arc4random_uniform(255)) / 255.0
-            let blue = CGFloat(arc4random_uniform(255)) / 255.0
+            let red = CGFloat(arc4random_uniform(255))
+            let green = CGFloat(arc4random_uniform(255))
+            let blue = CGFloat(arc4random_uniform(255))
             
             return genColor(red: red, green: green, blue: blue)
         }
