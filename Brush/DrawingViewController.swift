@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  DrawingViewController
 //  Brush
 //
 //  Created by Ken Siu on 4/12/2016.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class DrawingViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
