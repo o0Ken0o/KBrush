@@ -21,13 +21,21 @@ class DrawingViewController: UIViewController {
     
     private var lastSeriesImages = [UIImage?]()
     
+    var currentMasterPiece: Masterpiece?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if let masterpiece = currentMasterPiece {
+            self.title = masterpiece.name
+        }
+    }
+    
     // MARK: touches method
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print("began")
         lastSeriesImages.append(drawingImageView.image)
         UIView.animate(withDuration: 0.5) {
             self.topStackView.layer.opacity = 0.0
@@ -41,7 +49,6 @@ class DrawingViewController: UIViewController {
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print("moved")
         if let touch = touches.first {
             secondPoint = touch.location(in: drawingImageView)
             drawALine(first: firstPoint, second: secondPoint)
@@ -50,7 +57,6 @@ class DrawingViewController: UIViewController {
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print("end")
         if let touch = touches.first {
             secondPoint = touch.location(in: drawingImageView)
             drawALine(first: firstPoint, second: secondPoint)
@@ -75,7 +81,12 @@ class DrawingViewController: UIViewController {
             self.shareMasterPiece()
         })
         alertController.addAction(shareAction)
-            
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (alert) in
+            // do nothing
+        })
+        alertController.addAction(cancelAction)
+        
         // these two settings are for iPad devices
         alertController.popoverPresentationController?.sourceView = self.view
         alertController.popoverPresentationController?.sourceRect = ((sender.value(forKey: "view") as? UIView)?.frame)!
@@ -85,6 +96,49 @@ class DrawingViewController: UIViewController {
     
     func saveMasterPiece() {
         print("save button tapped")
+        if currentMasterPiece == nil {
+            let alertC = UIAlertController(title: "New Masterpiece", message: "Please enter a filename", preferredStyle: .alert)
+            
+            let oKAction = UIAlertAction(title: "OK", style: .default, handler: { (alert) in
+                let textField = alertC.textFields?[0]
+                self.currentMasterPiece = CoreDataHelper.sharedInstance.createAMasterpiece(image: self.drawingImageView.image!, name: (textField?.text)!)
+                self.title = self.currentMasterPiece?.name
+            })
+            alertC.addAction(oKAction)
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (alert) in
+                // do nothing
+            })
+            alertC.addAction(cancelAction)
+            
+            alertC.addTextField(configurationHandler: { (textField) in
+                textField.placeholder = "filename"
+            })
+            
+            present(alertC, animated: true, completion: nil)
+        } else {
+            let alertC = UIAlertController(title: "Update a masterpiece", message: "Please confirm the filename", preferredStyle: .alert)
+            
+            let oKAction = UIAlertAction(title: "OK", style: .default, handler: { (alert) in
+                let textField = alertC.textFields?[0]
+                CoreDataHelper.sharedInstance.updateAMasterpiece(masterpiece: self.currentMasterPiece!, newImage: self.drawingImageView.image!, newName:  (textField?.text)!)
+                self.title = self.currentMasterPiece?.name
+            })
+            alertC.addAction(oKAction)
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (alert) in
+                // do nothing
+            })
+            alertC.addAction(cancelAction)
+            
+            alertC.addTextField(configurationHandler: { (textField) in
+                textField.placeholder = "filename"
+                textField.text = self.currentMasterPiece?.name
+            })
+            
+            present(alertC, animated: true, completion: nil)
+        }
+
     }
     
     func shareMasterPiece() {

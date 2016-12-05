@@ -6,6 +6,8 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -184,7 +186,7 @@
         <!--Gallery-->
         <scene sceneID="3JU-de-agG">
             <objects>
-                <viewController id="Jar-Ff-0LX" customClass="GalleryViewController" customModule="Brush" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController automaticallyAdjustsScrollViewInsets="NO" id="Jar-Ff-0LX" customClass="GalleryViewController" customModule="Brush" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="DzD-fq-yCk"/>
                         <viewControllerLayoutGuide type="bottom" id="h38-Z4-PDM"/>
@@ -192,13 +194,64 @@
                     <view key="view" contentMode="scaleToFill" id="qhp-rS-6wg">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="150" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="SXV-as-MVl">
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="galleryTableCell" id="huk-YY-BRb" customClass="GalleryTableViewCell" customModule="Brush" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="375" height="150"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="huk-YY-BRb" id="Pdq-md-xS8">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="149"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="CoP-K6-W0T">
+                                                    <rect key="frame" x="20" y="10" width="97" height="129.5"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" secondItem="CoP-K6-W0T" secondAttribute="height" multiplier="12:16" id="6Dg-ea-O4o"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YJq-ni-hKs">
+                                                    <rect key="frame" x="117" y="63" width="250" height="23"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="bottom" secondItem="CoP-K6-W0T" secondAttribute="bottom" constant="10" id="GJw-xT-qFm"/>
+                                                <constraint firstItem="CoP-K6-W0T" firstAttribute="leading" secondItem="Pdq-md-xS8" secondAttribute="leading" constant="20" id="Mp5-mR-Zzi"/>
+                                                <constraint firstItem="YJq-ni-hKs" firstAttribute="leading" secondItem="CoP-K6-W0T" secondAttribute="trailing" id="Vbo-jB-BV3"/>
+                                                <constraint firstItem="YJq-ni-hKs" firstAttribute="centerY" secondItem="CoP-K6-W0T" secondAttribute="centerY" id="cc2-mJ-mAE"/>
+                                                <constraint firstItem="CoP-K6-W0T" firstAttribute="top" secondItem="Pdq-md-xS8" secondAttribute="top" constant="10" id="mTA-VE-5ph"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="YJq-ni-hKs" secondAttribute="trailing" id="vbF-4r-Z3L"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="masterpieceImageView" destination="CoP-K6-W0T" id="VCm-ze-tgW"/>
+                                            <outlet property="masterpieceNameLabel" destination="YJq-ni-hKs" id="2Pr-op-C5l"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="SXV-as-MVl" firstAttribute="leading" secondItem="qhp-rS-6wg" secondAttribute="leading" id="UsO-qK-SBW"/>
+                            <constraint firstItem="SXV-as-MVl" firstAttribute="top" secondItem="DzD-fq-yCk" secondAttribute="bottom" id="sQF-RZ-AcC"/>
+                            <constraint firstItem="h38-Z4-PDM" firstAttribute="top" secondItem="SXV-as-MVl" secondAttribute="bottom" id="waz-T3-j4x"/>
+                            <constraint firstAttribute="trailing" secondItem="SXV-as-MVl" secondAttribute="trailing" id="zcN-kh-8cf"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Gallery" id="GdB-rX-Li2"/>
+                    <connections>
+                        <outlet property="galleryTableView" destination="SXV-as-MVl" id="J8W-pO-cQV"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nV7-OF-dTG" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1730" y="-475"/>
+            <point key="canvasLocation" x="1728.8" y="-475.41229385307349"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="4g1-ZS-soY">
