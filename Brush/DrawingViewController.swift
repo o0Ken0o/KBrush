@@ -149,7 +149,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
     
     func saveMasterPiece() {
         if drawingImageView.image == nil {
-            // inform the user that saving an empty pic is not allowed by an alertController
+            // TODO: inform the user that saving an empty pic is not allowed by an alertController
             return
         }
         
@@ -203,9 +203,11 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
         // if the masterpiece is not saved yet, warn the user
         if let masterpiece = currentMasterPiece {
             let activityController = UIActivityViewController(activityItems: [masterpiece.image!], applicationActivities: nil)
-            // if saving to photo library, permission must be asked explicitly beforehand
+            // TODO: if saving to photo library, permission must be asked explicitly beforehand
             // if the users say no, we should ask them to change to settings
             present(activityController, animated: true, completion: nil)
+        } else {
+            // TODO: let the users know they need to save a masterpiece first before share it
         }
     }
     
