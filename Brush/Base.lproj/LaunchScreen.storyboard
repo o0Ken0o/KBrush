@@ -29,11 +29,11 @@
                                     <constraint firstAttribute="width" secondItem="XIS-mE-IFS" secondAttribute="height" multiplier="1:1" id="aDA-kF-EOy"/>
                                 </constraints>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Brush" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ltQ-zQ-smk">
-                                <rect key="frame" x="144.5" y="460" width="87.5" height="37"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="KBrush" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ltQ-zQ-smk">
+                                <rect key="frame" x="133" y="460" width="110" height="37"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="37" id="dRO-YF-nsh"/>
-                                    <constraint firstAttribute="width" constant="87.5" id="sLs-zi-a6K"/>
+                                    <constraint firstAttribute="width" constant="110" id="hQO-Jg-Rfe"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="31"/>
                                 <color key="textColor" red="1" green="0.4606451956" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

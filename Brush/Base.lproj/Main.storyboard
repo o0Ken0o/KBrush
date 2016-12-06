@@ -175,6 +175,7 @@
                         <outlet property="brushSize" destination="1XP-Np-E7d" id="hZO-cx-JZJ"/>
                         <outlet property="brushSizeLabel" destination="fpD-tP-q5E" id="4WV-pq-MOV"/>
                         <outlet property="drawingImageView" destination="Vuy-Fr-DU9" id="MQO-dO-JAU"/>
+                        <outlet property="moreBarButton" destination="hpH-Mo-g3M" id="Quu-LH-CtW"/>
                         <outlet property="topStackView" destination="KAO-o1-jL7" id="Jzx-sm-257"/>
                         <segue destination="V7k-44-3Ts" kind="show" identifier="SettingsViewController" id="voC-1Z-nJ4"/>
                     </connections>

@@ -15,6 +15,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
     @IBOutlet weak var topStackView: UIStackView!
     @IBOutlet weak var brushSize: UIButton!
     @IBOutlet weak var brushSizeLabel: UILabel!
+    @IBOutlet weak var moreBarButton: UIBarButtonItem!
     
     private var currentColor: UIColor = ColorScheme.Black {
         didSet {
@@ -207,6 +208,9 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
             let activityController = UIActivityViewController(activityItems: [masterpiece.image!], applicationActivities: nil)
             // TODO: if saving to photo library, permission must be asked explicitly beforehand
             // if the users say no, we should ask them to change to settings
+            
+            // for iPad devices
+            activityController.popoverPresentationController?.barButtonItem = moreBarButton
             present(activityController, animated: true, completion: nil)
         } else {
             Utilities.sharedInstance.popAlertView(parentVC: self, title: "Empty Masterpiece", message: "You need to save the masterpiece before sharing it.")
