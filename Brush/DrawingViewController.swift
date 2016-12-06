@@ -149,12 +149,12 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
     
     func saveMasterPiece() {
         if drawingImageView.image == nil {
-            // TODO: inform the user that saving an empty pic is not allowed by an alertController
+            Utilities.sharedInstance.popAlertView(parentVC: self, title: "Empty Masterpiece", message: "It is not allowed to save an empty masterpiece")
             return
         }
         
         if currentMasterPiece == nil {
-            let alertC = UIAlertController(title: "New Masterpiece", message: "Please enter a filename", preferredStyle: .alert)
+            let alertC = UIAlertController(title: "New Masterpiece", message: "Please enter a name", preferredStyle: .alert)
             
             let oKAction = UIAlertAction(title: "OK", style: .default, handler: { (alert) in
                 let textField = alertC.textFields?[0]
@@ -169,12 +169,12 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
             alertC.addAction(cancelAction)
             
             alertC.addTextField(configurationHandler: { (textField) in
-                textField.placeholder = "filename"
+                textField.placeholder = "name"
             })
             
             present(alertC, animated: true, completion: nil)
         } else {
-            let alertC = UIAlertController(title: "Update a masterpiece", message: "Please confirm the filename", preferredStyle: .alert)
+            let alertC = UIAlertController(title: "Update a masterpiece", message: "Please confirm the name", preferredStyle: .alert)
             
             let oKAction = UIAlertAction(title: "OK", style: .default, handler: { (alert) in
                 let textField = alertC.textFields?[0]
@@ -189,7 +189,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
             alertC.addAction(cancelAction)
             
             alertC.addTextField(configurationHandler: { (textField) in
-                textField.placeholder = "filename"
+                textField.placeholder = "name"
                 textField.text = self.currentMasterPiece?.name
             })
             
@@ -199,7 +199,6 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
     }
     
     func shareMasterPiece() {
-        print("share button tapped")
         // if the masterpiece is not saved yet, warn the user
         if let masterpiece = currentMasterPiece {
             let activityController = UIActivityViewController(activityItems: [masterpiece.image!], applicationActivities: nil)
@@ -207,7 +206,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
             // if the users say no, we should ask them to change to settings
             present(activityController, animated: true, completion: nil)
         } else {
-            // TODO: let the users know they need to save a masterpiece first before share it
+            Utilities.sharedInstance.popAlertView(parentVC: self, title: "Empty Masterpiece", message: "You need to save the masterpiece before sharing it.")
         }
     }
     
