@@ -7,9 +7,11 @@
 //
 
 import UIKit
+import CoreData
 
 protocol GalleryViewControllerDelegate {
     func selectedAMasterpiece(galleryVC: GalleryViewController, masterpiece: Masterpiece)
+    func deletedAMasterpiece(galleryVC: GalleryViewController, objectId: NSManagedObjectID)
 }
 
 class GalleryViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
@@ -32,6 +34,18 @@ class GalleryViewController: UIViewController, UITableViewDelegate, UITableViewD
         galleryTableView.deselectRow(at: indexPath, animated: true)
         delegate?.selectedAMasterpiece(galleryVC: self, masterpiece: masterpieces[indexPath.row])
         _ = self.navigationController?.popViewController(animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let masterpieceToBeDeleted = masterpieces[indexPath.row]
+            CoreDataHelper.sharedInstance.deleteAMasterpiece(masterpiece: masterpieceToBeDeleted)
+            masterpieces.remove(at: indexPath.row)
+            galleryTableView.deleteRows(at: [indexPath], with: .right)
+            
+            // need to handle deletting the current masterpiece in drawingViewController
+            delegate?.deletedAMasterpiece(galleryVC: self, objectId: masterpieceToBeDeleted.objectID)
+        }
     }
     
     //MARK: UITableViewDataSource

@@ -37,29 +37,10 @@ class CoreDataHelper {
         return (appDelegate?.persistentContainer.viewContext)!
     }
     
-    func modifyAMasterpiece() {
-        
-    }
-    
-    func updateAMasterpiece(masterpiece: Masterpiece, newImage: UIImage, newName: String) {
-        let context = getContext()
-        masterpiece.image = NSData(data: UIImagePNGRepresentation(newImage)!)
-        masterpiece.name = newName
-        
-        do {
-            try context.save()
-        } catch let error as NSError  {
-            print("Could not save \(error), \(error.userInfo)")
-        } catch {
-            
-        }
-        
-    }
-    
     func createAMasterpiece(image: UIImage, name: String) -> Masterpiece? {
         let context = getContext()
         let masterpiece = Masterpiece(context: context)
-
+        
         masterpiece.image = NSData(data: UIImagePNGRepresentation(image)!)
         masterpiece.name = name
         
@@ -75,4 +56,33 @@ class CoreDataHelper {
         return nil
         
     }
+    
+    func retrieveAMasterpiece() {
+        
+    }
+    
+    func updateAMasterpiece(masterpiece: Masterpiece, newImage: UIImage, newName: String) {
+        let context = getContext()
+        masterpiece.image = NSData(data: UIImagePNGRepresentation(newImage)!)
+        masterpiece.name = newName
+        
+        do {
+            try context.save()
+        } catch let error as NSError  {
+            print("Could not save \(error), \(error.userInfo)")
+        } catch {}
+        
+    }
+    
+    func deleteAMasterpiece(masterpiece: Masterpiece) {
+        let context = getContext()
+        context.delete(masterpiece)
+        
+        do {
+            try context.save()
+        } catch let error as NSError  {
+            print("Could not save \(error), \(error.userInfo)")
+        } catch {}
+    }
+    
 }

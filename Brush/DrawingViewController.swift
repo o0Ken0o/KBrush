@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class DrawingViewController: UIViewController, GalleryViewControllerDelegate, SettingsViewControllerDelegate {
 
@@ -33,8 +34,10 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
     
     var currentMasterPiece: Masterpiece? {
         didSet {
-            self.drawingImageView.image = UIImage(data: (currentMasterPiece?.image as! Data))
-            self.title = currentMasterPiece?.name
+            if let masterpiece = currentMasterPiece {
+                self.drawingImageView.image = UIImage(data: (masterpiece.image as! Data))
+                self.title = masterpiece.name
+            }
         }
     }
     
@@ -72,6 +75,16 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
     // MARK: GalleryViewControllerDelegate
     func selectedAMasterpiece(galleryVC: GalleryViewController, masterpiece: Masterpiece) {
         self.currentMasterPiece = masterpiece
+    }
+    
+    func deletedAMasterpiece(galleryVC: GalleryViewController, objectId: NSManagedObjectID) {
+        if let masterpiece = currentMasterPiece {
+            if masterpiece.objectID == objectId {
+                currentMasterPiece = nil
+                drawingImageView.image = nil
+                self.title = ""
+            }
+        }
     }
     
     // MARK: touches method
@@ -135,7 +148,11 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
     }
     
     func saveMasterPiece() {
-        print("save button tapped")
+        if drawingImageView.image == nil {
+            // inform the user that saving an empty pic is not allowed by an alertController
+            return
+        }
+        
         if currentMasterPiece == nil {
             let alertC = UIAlertController(title: "New Masterpiece", message: "Please enter a filename", preferredStyle: .alert)
             
