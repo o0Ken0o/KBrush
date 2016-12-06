@@ -8,14 +8,24 @@
 
 import UIKit
 
-class DrawingViewController: UIViewController, GalleryViewControllerDelegate {
+class DrawingViewController: UIViewController, GalleryViewControllerDelegate, SettingsViewControllerDelegate {
 
     @IBOutlet weak var drawingImageView: UIImageView!
     @IBOutlet weak var topStackView: UIStackView!
     @IBOutlet weak var brushSize: UIButton!
     
-    private var currentColor: UIColor = ColorScheme.Black
-    private var currentBrushSize: CGFloat = 10.0
+    private var currentColor: UIColor = ColorScheme.Black {
+        didSet {
+            brushSize.setTitleColor(currentColor, for: .normal)
+        }
+    }
+    
+    private var currentBrushSize: CGFloat = 10.0 {
+        didSet {
+            brushSize.setTitle("\(Int(currentBrushSize))", for: .normal)
+        }
+    }
+    
     private var firstPoint = CGPoint(x: 0, y: 0)
     private var secondPoint = CGPoint(x: 0, y: 0)
     
@@ -44,6 +54,19 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate {
             let galleryVC = segue.destination as! GalleryViewController
             galleryVC.delegate = self
         }
+        
+        if segue.identifier == "SettingsViewController" {
+            let settingsVC = segue.destination as! SettingsViewController
+            settingsVC.customBrushSize = currentBrushSize
+            settingsVC.customColor = currentColor
+            settingsVC.delegate = self
+        }
+    }
+    
+    // MARK: SettingsViewControllerDelegate
+    func changeBrushSizeOrColor(settingsVC: SettingsViewController, brushSize: CGFloat, brushColor: UIColor) {
+        currentBrushSize = brushSize
+        currentColor = brushColor
     }
     
     // MARK: GalleryViewControllerDelegate
@@ -228,6 +251,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate {
     
     @IBAction func changeBrushSize(_ sender: UIButton) {
         print("changeBrushSize")
+        performSegue(withIdentifier: "SettingsViewController", sender: nil)
     }
 }
 
