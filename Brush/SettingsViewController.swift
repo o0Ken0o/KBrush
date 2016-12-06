@@ -34,6 +34,8 @@ class SettingsViewController: UIViewController {
         
         brushSizeSlider.value = Float(customBrushSize)
         changeBrushSize()
+        
+        self.view.backgroundColor = ColorScheme.PaleYellow
     }
 
     @IBAction func brushSizeChanged(_ sender: Any) {

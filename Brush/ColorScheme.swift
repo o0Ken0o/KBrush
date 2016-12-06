@@ -13,6 +13,7 @@ class ColorScheme {
     static let Red = genColor(red: 213, green: 39, blue: 51)
     static let Orange = genColor(red: 253, green: 164, blue: 41)
     static let Yellow = genColor(red: 254, green: 217, blue: 83)
+    static let PaleYellow = genColor(red: 255, green: 247, blue: 211)
     static let Green = genColor(red: 148, green: 217, blue: 103)
     static let Blue = genColor(red: 27, green: 118, blue: 236)
     static let Purple = genColor(red: 147, green: 71, blue: 194)

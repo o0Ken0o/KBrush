@@ -47,6 +47,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.drawingImageView.backgroundColor = ColorScheme.PaleYellow
     }
     
     override func viewWillAppear(_ animated: Bool) {

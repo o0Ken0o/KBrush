@@ -27,6 +27,8 @@ class GalleryViewController: UIViewController, UITableViewDelegate, UITableViewD
         galleryTableView.dataSource = self
         
         masterpieces = CoreDataHelper.sharedInstance.getAllMasterpieces()
+        
+        self.galleryTableView.backgroundColor = ColorScheme.PaleYellow
     }
 
     //MARK: UITableViewDelegate

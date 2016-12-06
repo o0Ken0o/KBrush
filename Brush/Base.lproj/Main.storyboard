@@ -25,7 +25,7 @@
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Vuy-Fr-DU9">
                                 <rect key="frame" x="0.0" y="64" width="320" height="416"/>
-                                <color key="backgroundColor" red="1" green="0.84128947881381466" blue="0.0" alpha="0.25165163590604028" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="backgroundColor" red="1" green="0.84128947881381466" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </imageView>
                             <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KAO-o1-jL7">
                                 <rect key="frame" x="16" y="450" width="288" height="30"/>
@@ -192,7 +192,7 @@
                         <viewControllerLayoutGuide type="top" id="Lst-Hl-42I"/>
                         <viewControllerLayoutGuide type="bottom" id="ZXm-Qe-Uit"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="vKc-Uy-tDM">
+                    <view key="view" opaque="NO" contentMode="scaleToFill" id="vKc-Uy-tDM">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
@@ -271,7 +271,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="0.87723214289999996" blue="0.12120004249999999" alpha="0.32712877516778521" colorSpace="custom" customColorSpace="sRGB"/>
                         <color key="tintColor" red="1" green="0.45882352941176469" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="Fo0-Ay-QDn" firstAttribute="leading" secondItem="vKc-Uy-tDM" secondAttribute="leadingMargin" constant="20" id="BQ6-dZ-9f3"/>
