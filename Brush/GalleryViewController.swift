@@ -36,16 +36,22 @@ class GalleryViewController: UIViewController, UITableViewDelegate, UITableViewD
         _ = self.navigationController?.popViewController(animated: true)
     }
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            let masterpieceToBeDeleted = masterpieces[indexPath.row]
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        
+        let deleteAction = UITableViewRowAction(style: .normal, title: "-", handler: {(action: UITableViewRowAction, indexPath: IndexPath) in
+            let masterpieceToBeDeleted = self.masterpieces[indexPath.row]
             CoreDataHelper.sharedInstance.deleteAMasterpiece(masterpiece: masterpieceToBeDeleted)
-            masterpieces.remove(at: indexPath.row)
-            galleryTableView.deleteRows(at: [indexPath], with: .right)
+            self.masterpieces.remove(at: indexPath.row)
+            self.galleryTableView.deleteRows(at: [indexPath], with: .right)
             
             // need to handle deletting the current masterpiece in drawingViewController
-            delegate?.deletedAMasterpiece(galleryVC: self, objectId: masterpieceToBeDeleted.objectID)
-        }
+            self.delegate?.deletedAMasterpiece(galleryVC: self, objectId: masterpieceToBeDeleted.objectID)
+            
+            tableView.isEditing = false
+        })
+        deleteAction.backgroundColor = UIColor(red: 255.0 / 255.0, green: 117.0 / 255.0, blue: 0.0, alpha: 1.0)
+        
+        return [deleteAction]
     }
     
     //MARK: UITableViewDataSource
