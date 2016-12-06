@@ -64,9 +64,8 @@ class GalleryViewController: UIViewController, UITableViewDelegate, UITableViewD
         let masterpiece = masterpieces[indexPath.row]
         if let image = masterpiece.image {
             cell.masterpieceImageView.image = UIImage(data: image as Data)
-            cell.masterpieceImageView.layer.borderColor = UIColor.gray.cgColor
-            cell.masterpieceImageView.layer.borderWidth = 2.0
-            cell.masterpieceImageView.backgroundColor = UIColor.white
+            cell.masterpieceImageView.layer.borderColor = ColorScheme.Orange.cgColor
+            cell.masterpieceImageView.layer.borderWidth = 1.5
         }
         cell.masterpieceNameLabel.text = masterpiece.name
         return cell

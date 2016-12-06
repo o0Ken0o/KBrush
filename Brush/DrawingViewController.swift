@@ -14,16 +14,19 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
     @IBOutlet weak var drawingImageView: UIImageView!
     @IBOutlet weak var topStackView: UIStackView!
     @IBOutlet weak var brushSize: UIButton!
+    @IBOutlet weak var brushSizeLabel: UILabel!
     
     private var currentColor: UIColor = ColorScheme.Black {
         didSet {
-            brushSize.setTitleColor(currentColor, for: .normal)
+//            brushSize.setTitleColor(currentColor, for: .normal)
+            brushSizeLabel.textColor = currentColor
         }
     }
     
     private var currentBrushSize: CGFloat = 10.0 {
         didSet {
-            brushSize.setTitle("\(Int(currentBrushSize))", for: .normal)
+//            brushSize.setTitle("\(Int(currentBrushSize))", for: .normal)
+            brushSizeLabel.text = "\(Int(currentBrushSize))"
         }
     }
     
@@ -230,7 +233,8 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
     
     func setStrokeColor(color: UIColor) {
         currentColor = color
-        brushSize.titleLabel?.textColor = color
+//        brushSize.titleLabel?.textColor = color
+        brushSizeLabel.textColor = color
     }
     
     
