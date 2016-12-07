@@ -89,6 +89,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
                 currentMasterPiece = nil
                 drawingImageView.image = nil
                 self.title = ""
+                initializeImageContextBGColor()
             }
         }
     }
@@ -129,7 +130,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
     
     // MARK: Customized Methods
     @IBAction func moreTapped(_ sender: UIBarButtonItem) {
-        let alertController = UIAlertController(title: "Save or Share", message: "", preferredStyle: .actionSheet)
+        let alertController = UIAlertController(title: "Menu", message: "", preferredStyle: .actionSheet)
         
         let newAction = UIAlertAction(title: "New", style: .default, handler: { (alert) in
             self.addNewMasterpiece()
