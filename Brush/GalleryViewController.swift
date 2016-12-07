@@ -68,6 +68,8 @@ class GalleryViewController: UIViewController, UITableViewDelegate, UITableViewD
             cell.masterpieceImageView.image = UIImage(data: image as Data)
             cell.masterpieceImageView.layer.borderColor = ColorScheme.Orange.cgColor
             cell.masterpieceImageView.layer.borderWidth = 1.5
+            cell.masterpieceImageView.layer.cornerRadius = 5.0
+            cell.masterpieceImageView.backgroundColor = ColorScheme.PaleYellow
         }
         cell.masterpieceNameLabel.text = masterpiece.name
         return cell

@@ -48,6 +48,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
     override func viewDidLoad() {
         super.viewDidLoad()
         self.drawingImageView.backgroundColor = ColorScheme.PaleYellow
+        initializeImageContextBGColor()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -130,6 +131,11 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
     @IBAction func moreTapped(_ sender: UIBarButtonItem) {
         let alertController = UIAlertController(title: "Save or Share", message: "", preferredStyle: .actionSheet)
         
+        let newAction = UIAlertAction(title: "New", style: .default, handler: { (alert) in
+            self.addNewMasterpiece()
+        })
+        alertController.addAction(newAction)
+        
         let saveAction = UIAlertAction(title: "Save", style: .default, handler: {(alert :UIAlertAction!) in
             self.saveMasterPiece()
         })
@@ -156,6 +162,9 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
         if drawingImageView.image == nil {
             Utilities.sharedInstance.popAlertView(parentVC: self, title: "Empty Masterpiece", message: "It is not allowed to save an empty masterpiece")
             return
+        } else {
+            // initialize the bg color of the image before saving
+            self.drawingImageView.backgroundColor = ColorScheme.PaleYellow
         }
         
         if currentMasterPiece == nil {
@@ -218,6 +227,13 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
         }
     }
     
+    func addNewMasterpiece() {
+        self.title = ""
+        self.drawingImageView.image = nil
+        self.currentMasterPiece = nil
+        initializeImageContextBGColor()
+    }
+    
     func drawALine(first: CGPoint, second: CGPoint) {
         
         UIGraphicsBeginImageContext(drawingImageView.bounds.size)
@@ -234,6 +250,15 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
         
         UIGraphicsEndImageContext()
         
+    }
+    
+    func initializeImageContextBGColor() {
+        UIGraphicsBeginImageContext(drawingImageView.bounds.size)
+        let context = UIGraphicsGetCurrentContext()
+        context?.setFillColor(ColorScheme.PaleYellow.cgColor)
+        context?.fill(CGRect(origin: CGPoint(x: 0, y: 0), size: drawingImageView.bounds.size))
+        drawingImageView.image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
     }
     
     func setStrokeColor(color: UIColor) {
