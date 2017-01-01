@@ -1,16 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11542" systemVersion="16B2555" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="bSJ-z8-V9P">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16C68" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="bSJ-z8-V9P">
     <device id="retina3_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
+        <!--Color Picker View Controller-->
+        <scene sceneID="iPU-ZT-szs">
+            <objects>
+                <viewController id="5Cd-JQ-X2h" customClass="ColorPickerViewController" customModule="Brush" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="vMp-h9-1f9"/>
+                        <viewControllerLayoutGuide type="bottom" id="0sy-lI-xVv"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Vcu-Qh-0ww">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="EUZ-jn-WRV">
+                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="rGc-Tq-njG">
+                            <connections>
+                                <action selector="cancelTapped:" destination="5Cd-JQ-X2h" id="zWj-VV-Swc"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Confirm" id="uMz-8t-6ye">
+                            <connections>
+                                <action selector="confirmTapped:" destination="5Cd-JQ-X2h" id="dbJ-hm-z7e"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Oez-zj-ySe" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="973" y="-1266"/>
+        </scene>
         <!--Drawing View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
@@ -165,19 +196,25 @@
                                 <segue destination="Jar-Ff-0LX" kind="show" identifier="GalleryViewController" id="qla-fT-r4F"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" image="more" id="hpH-Mo-g3M">
-                            <connections>
-                                <action selector="moreTapped:" destination="BYZ-38-t0r" id="98O-hv-ZPK"/>
-                            </connections>
-                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem image="more" id="hpH-Mo-g3M">
+                                <connections>
+                                    <action selector="moreTapped:" destination="BYZ-38-t0r" id="98O-hv-ZPK"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="T" id="LEj-QF-qGT"/>
+                            <barButtonItem systemItem="action" id="pqU-R2-jej"/>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="brushSize" destination="1XP-Np-E7d" id="hZO-cx-JZJ"/>
                         <outlet property="brushSizeLabel" destination="fpD-tP-q5E" id="4WV-pq-MOV"/>
+                        <outlet property="colorPickerBarButton" destination="LEj-QF-qGT" id="5ZA-cp-Mnn"/>
                         <outlet property="drawingImageView" destination="Vuy-Fr-DU9" id="MQO-dO-JAU"/>
                         <outlet property="moreBarButton" destination="hpH-Mo-g3M" id="Quu-LH-CtW"/>
                         <outlet property="topStackView" destination="KAO-o1-jL7" id="Jzx-sm-257"/>
                         <segue destination="V7k-44-3Ts" kind="show" identifier="SettingsViewController" id="voC-1Z-nJ4"/>
+                        <segue destination="5Cd-JQ-X2h" kind="show" identifier="ColorPickerViewController" id="adV-jc-bNO"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

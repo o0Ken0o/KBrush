@@ -9,13 +9,16 @@
 import UIKit
 import CoreData
 
-class DrawingViewController: UIViewController, GalleryViewControllerDelegate, SettingsViewControllerDelegate {
+class DrawingViewController: UIViewController, GalleryViewControllerDelegate, SettingsViewControllerDelegate, ColorPickerViewDelegate {
 
     @IBOutlet weak var drawingImageView: UIImageView!
     @IBOutlet weak var topStackView: UIStackView!
     @IBOutlet weak var brushSize: UIButton!
     @IBOutlet weak var brushSizeLabel: UILabel!
     @IBOutlet weak var moreBarButton: UIBarButtonItem!
+    @IBOutlet weak var colorPickerBarButton: UIBarButtonItem!
+    
+    var colorPickerButton: UIButton!
     
     private var currentColor: UIColor = ColorScheme.Black {
         didSet {
@@ -49,6 +52,12 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
         super.viewDidLoad()
         self.drawingImageView.backgroundColor = ColorScheme.PaleYellow
         initializeImageContextBGColor()
+        
+        colorPickerButton = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+        colorPickerButton.backgroundColor = UIColor.black
+        colorPickerButton.layer.cornerRadius = 15
+        colorPickerButton.addTarget(self, action: #selector(DrawingViewController.colorPickerTapped), for: .touchUpInside)
+        colorPickerBarButton.customView = colorPickerButton
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -70,12 +79,22 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
             settingsVC.customColor = currentColor
             settingsVC.delegate = self
         }
+        
+        if segue.identifier == "ColorPickerViewController" {
+            let colorPickerVC = segue.destination as! ColorPickerViewController
+            colorPickerVC.delegate = self
+        }
     }
     
     // MARK: SettingsViewControllerDelegate
     func changeBrushSizeOrColor(settingsVC: SettingsViewController, brushSize: CGFloat, brushColor: UIColor) {
         currentBrushSize = brushSize
         currentColor = brushColor
+    }
+    
+    // MARK: ColorPickerViewDelegate
+    func colorSelected(color: UIColor) {
+        colorPickerButton.backgroundColor = color
     }
     
     // MARK: GalleryViewControllerDelegate
@@ -305,6 +324,10 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
     @IBAction func changeBrushSize(_ sender: UIButton) {
         print("changeBrushSize")
         performSegue(withIdentifier: "SettingsViewController", sender: nil)
+    }
+    
+    func colorPickerTapped() {
+        performSegue(withIdentifier: "ColorPickerViewController", sender: nil)
     }
 }
 
