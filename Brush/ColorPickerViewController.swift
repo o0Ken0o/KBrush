@@ -13,20 +13,16 @@ protocol ColorPickerViewDelegate {
 }
 
 class ColorPickerViewController: UIViewController, ColorPickerDelegate {
-    
-    // TODO: set the default color of the color wheel as the currently selected color
-    // TODO: set the brush color of the parent view controller
-    
+        
     var delegate: ColorPickerViewDelegate?
-    var colorSelected = UIColor.white
+    var colorSelected: UIColor!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let colorPickerView = ColorPicker(frame: self.view.frame)
+        let colorPickerView = ColorPicker(frame: self.view.frame, currentColor: colorSelected)
         colorPickerView.delegate = self
         self.view.addSubview(colorPickerView)
-        
     }
     
     @IBAction func cancelTapped(_ sender: Any) {

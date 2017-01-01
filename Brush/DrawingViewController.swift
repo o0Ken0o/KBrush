@@ -83,6 +83,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
         if segue.identifier == "ColorPickerViewController" {
             let colorPickerVC = segue.destination as! ColorPickerViewController
             colorPickerVC.delegate = self
+            colorPickerVC.colorSelected = currentColor
         }
     }
     
@@ -95,6 +96,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
     // MARK: ColorPickerViewDelegate
     func colorSelected(color: UIColor) {
         colorPickerButton.backgroundColor = color
+        currentColor = color
     }
     
     // MARK: GalleryViewControllerDelegate

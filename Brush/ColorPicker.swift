@@ -23,7 +23,7 @@ class ColorPicker: UIView {
     var colorMarker: UIView!
     var brightnessMarker: UIView!
     
-    var colorPicked: UIColor?
+    var colorPicked: UIColor!
     var brightnessPicked: CGFloat?
     
     var isDraggingColorWheel = false
@@ -31,8 +31,10 @@ class ColorPicker: UIView {
     
     var delegate: ColorPickerDelegate?
     
-    override init(frame: CGRect) {
+    init(frame: CGRect, currentColor: UIColor) {
         super.init(frame: frame)
+        
+        colorPicked = currentColor
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(ColorPicker.handleGesture(_:)))
         self.addGestureRecognizer(tapGesture)
@@ -62,7 +64,7 @@ class ColorPicker: UIView {
         colorMarker.layer.cornerRadius = 20
         colorMarker.layer.borderColor = UIColor.black.cgColor
         colorMarker.layer.borderWidth = 5
-        colorMarker.backgroundColor = UIColor.white
+        colorMarker.backgroundColor = colorPicked
         colorMarker.center = CGPoint(x: colorWheelImageView.bounds.width / 2.0, y: colorWheelImageView.bounds.height / 2.0)
         colorWheelImageView.addSubview(colorMarker)
         
@@ -84,6 +86,27 @@ class ColorPicker: UIView {
         
         self.addSubview(colorWheelImageView)
         self.addSubview(gradientView)
+        
+        let hue = UnsafeMutablePointer<CGFloat>.allocate(capacity: 1)
+        let saturation = UnsafeMutablePointer<CGFloat>.allocate(capacity: 1)
+        let brightness = UnsafeMutablePointer<CGFloat>.allocate(capacity: 1)
+        let alpha = UnsafeMutablePointer<CGFloat>.allocate(capacity: 1)
+        colorPicked.getHue(hue, saturation: saturation, brightness: brightness, alpha: alpha)
+        
+        let r = Double((colorWheelRadius - 1.0) * saturation.pointee)
+        let angleReflectedAlongX = Double(hue.pointee) * M_PI * 2
+        let selectedX = r * cos(angleReflectedAlongX) + Double(colorWheelRadius - 1.0)
+        let selectedY = r * sin(angleReflectedAlongX) * (-1) + Double(colorWheelRadius - 1.0)
+        positionColorMark(CGPoint(x: selectedX, y: selectedY))
+        
+        let brightnessX = gradientView.bounds.width * (1.0 - brightness.pointee)
+        let brightnessY = gradientView.bounds.height / 2.0
+        positionAlphaMark(CGPoint(x: brightnessX, y: brightnessY))
+        
+        hue.deallocate(capacity: 1)
+        saturation.deallocate(capacity: 1)
+        brightness.deallocate(capacity: 1)
+        alpha.deallocate(capacity: 1)
     }
     
     func handleGesture(_ recognizer: UIGestureRecognizer) {
