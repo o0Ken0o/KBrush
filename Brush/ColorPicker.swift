@@ -9,7 +9,7 @@
 import UIKit
 
 protocol ColorPickerDelegate {
-    func colorSelected(color: UIColor)
+    func selected(color: UIColor, thickness: CGFloat)
 }
 
 class ColorPicker: UIView {
@@ -38,11 +38,11 @@ class ColorPicker: UIView {
     
     let MAX_THICKNESS: CGFloat = 42
     
-    init(frame: CGRect, currentColor: UIColor) {
+    init(frame: CGRect, currentColor: UIColor, currentThickness: CGFloat) {
         super.init(frame: frame)
         
         colorPicked = currentColor
-        thicknessPicked = 5
+        thicknessPicked = currentThickness
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(ColorPicker.handleGesture(_:)))
         self.addGestureRecognizer(tapGesture)
@@ -158,6 +158,7 @@ class ColorPicker: UIView {
         thicknessMarkerMask.frame = thicknessMarker.frame
         thicknessMarkerMask.path = thicknessMarkerPath.cgPath
         thicknessMarker.layer.mask = thicknessMarkerMask
+        thicknessMarker.center.x = thicknessPicked / MAX_THICKNESS * adjustThicknessV.bounds.width
         
         containerView.addSubview(adjustThicknessV)
         containerView.center = gradientView.center
@@ -239,7 +240,7 @@ class ColorPicker: UIView {
                 
                 let boundaryPt = findPtIntersectingGradientView(brightnessMarker.center)
                 colorPicked = getPixelColorAtPoint(point: boundaryPt, sourceView: gradientView)
-                delegate?.colorSelected(color: colorPicked)
+                delegate?.selected(color: colorPicked, thickness: thicknessPicked)
             }
         }
     }
@@ -254,12 +255,19 @@ class ColorPicker: UIView {
         let parentsWidth: CGFloat = finalColorNThicknessView.bounds.width
         
         let path = UIBezierPath()
-        path.move(to: CGPoint(x: 0, y: 0 + (parentsThicknessHalf - thicknessHalf)))
-        path.addLine(to: CGPoint(x: parentsWidth, y: 0 + (parentsThicknessHalf - thicknessHalf)))
-        path.addLine(to: CGPoint(x: parentsWidth, y: thicknessPicked + (parentsThicknessHalf - thicknessHalf)))
-        path.addLine(to: CGPoint(x: 0, y: thicknessPicked + (parentsThicknessHalf - thicknessHalf)))
-        path.addLine(to: CGPoint(x: 0, y: 0 + (parentsThicknessHalf - thicknessHalf)))
+        let radius = thicknessHalf
+        path.move(to: CGPoint(x: radius, y: parentsThicknessHalf))
+        path.addArc(withCenter: CGPoint(x: radius, y: parentsThicknessHalf), radius: radius, startAngle: CGFloat(0), endAngle: CGFloat(M_PI * 2), clockwise: true)
         
+        path.move(to: CGPoint(x: parentsWidth - radius, y: parentsThicknessHalf))
+        path.addArc(withCenter: CGPoint(x: parentsWidth - radius, y: parentsThicknessHalf), radius: radius, startAngle: CGFloat(0), endAngle: CGFloat(M_PI * 2), clockwise: true)
+        
+        path.move(to: CGPoint(x: radius, y: 0 + (parentsThicknessHalf - thicknessHalf)))
+        path.addLine(to: CGPoint(x: parentsWidth - radius, y: 0 + (parentsThicknessHalf - thicknessHalf)))
+        path.addLine(to: CGPoint(x: parentsWidth - radius, y: thicknessPicked + (parentsThicknessHalf - thicknessHalf)))
+        path.addLine(to: CGPoint(x: radius, y: thicknessPicked + (parentsThicknessHalf - thicknessHalf)))
+        path.addLine(to: CGPoint(x: radius, y: 0 + (parentsThicknessHalf - thicknessHalf)))
+
         let mask = CAShapeLayer()
         mask.frame = finalColorNThicknessView.bounds
         mask.path = path.cgPath
@@ -348,7 +356,6 @@ class ColorPicker: UIView {
     
     func updateThicknessPicked() {
         thicknessPicked = thicknessMarker.center.x / adjustThicknessV.bounds.width * MAX_THICKNESS
-        print("thicknessPicked: \(thicknessPicked!)")
     }
     
     func positionThicknessMarker(_ cgPoint: CGPoint) {

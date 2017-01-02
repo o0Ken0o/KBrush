@@ -27,7 +27,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
         }
     }
     
-    private var currentBrushSize: CGFloat = 10.0 {
+    private var currentBrushSize: CGFloat = 1.0 {
         didSet {
 //            brushSize.setTitle("\(Int(currentBrushSize))", for: .normal)
             brushSizeLabel.text = "\(Int(currentBrushSize))"
@@ -91,6 +91,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
             let colorPickerVC = segue.destination as! ColorPickerViewController
             colorPickerVC.delegate = self
             colorPickerVC.colorSelected = currentColor
+            colorPickerVC.thicknessSelected = currentBrushSize
         }
     }
     
@@ -101,9 +102,10 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
     }
     
     // MARK: ColorPickerViewDelegate
-    func colorSelected(color: UIColor) {
+    func selected(color: UIColor, thickness: CGFloat) {
         colorPickerButton.backgroundColor = color
         currentColor = color
+        currentBrushSize = thickness
     }
     
     // MARK: GalleryViewControllerDelegate

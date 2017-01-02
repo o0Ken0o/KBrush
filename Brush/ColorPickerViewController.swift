@@ -9,18 +9,19 @@
 import UIKit
 
 protocol ColorPickerViewDelegate {
-    func colorSelected(color: UIColor)
+    func selected(color: UIColor, thickness: CGFloat)
 }
 
 class ColorPickerViewController: UIViewController, ColorPickerDelegate {
         
     var delegate: ColorPickerViewDelegate?
     var colorSelected: UIColor!
+    var thicknessSelected: CGFloat!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let colorPickerView = ColorPicker(frame: self.view.frame, currentColor: colorSelected)
+        let colorPickerView = ColorPicker(frame: self.view.frame, currentColor: colorSelected, currentThickness: thicknessSelected)
         colorPickerView.delegate = self
         self.view.addSubview(colorPickerView)
     }
@@ -30,11 +31,12 @@ class ColorPickerViewController: UIViewController, ColorPickerDelegate {
     }
     
     @IBAction func confirmTapped(_ sender: Any) {
-        delegate?.colorSelected(color: colorSelected)
+        delegate?.selected(color: colorSelected, thickness: thicknessSelected)
         _ = self.navigationController?.popViewController(animated: true)
     }
     
-    func colorSelected(color: UIColor) {
+    func selected(color: UIColor, thickness: CGFloat) {
         colorSelected = color
+        thicknessSelected = thickness
     }
 }
