@@ -81,12 +81,16 @@
                             </barButtonItem>
                             <barButtonItem title="T" id="LEj-QF-qGT"/>
                             <barButtonItem title="T" id="pqU-R2-jej"/>
+                            <barButtonItem title="Re" id="5LZ-dC-aKG"/>
+                            <barButtonItem title="Rub" id="ups-wx-rzW"/>
                         </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="colorPickerBarButton" destination="LEj-QF-qGT" id="5ZA-cp-Mnn"/>
                         <outlet property="drawingImageView" destination="Vuy-Fr-DU9" id="MQO-dO-JAU"/>
                         <outlet property="moreBarButton" destination="hpH-Mo-g3M" id="Quu-LH-CtW"/>
+                        <outlet property="redoBarButton" destination="5LZ-dC-aKG" id="Ezk-ae-Y4A"/>
+                        <outlet property="rubberBarButton" destination="ups-wx-rzW" id="6n0-Bj-a5W"/>
                         <outlet property="undoBarButton" destination="pqU-R2-jej" id="c9f-In-LpS"/>
                         <segue destination="5Cd-JQ-X2h" kind="show" identifier="ColorPickerViewController" id="adV-jc-bNO"/>
                     </connections>

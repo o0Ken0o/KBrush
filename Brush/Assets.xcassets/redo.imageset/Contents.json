@@ -2,7 +2,7 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "undo-button.png",
+      "filename" : "redo.png",
       "scale" : "1x"
     },
     {

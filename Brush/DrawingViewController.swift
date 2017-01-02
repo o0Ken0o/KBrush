@@ -15,6 +15,20 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     @IBOutlet weak var moreBarButton: UIBarButtonItem!
     @IBOutlet weak var colorPickerBarButton: UIBarButtonItem!
     @IBOutlet weak var undoBarButton: UIBarButtonItem!
+    @IBOutlet weak var redoBarButton: UIBarButtonItem!
+    @IBOutlet weak var rubberBarButton: UIBarButtonItem!
+    
+    var isRubberMode: Bool = false {
+        didSet {
+            if isRubberMode {
+                rubberBarButton.customView?.layer.borderColor = ColorScheme.Orange.cgColor
+                colorPickerButton.layer.borderColor = UIColor.clear.cgColor
+            } else {
+                rubberBarButton.customView?.layer.borderColor = UIColor.clear.cgColor
+                colorPickerButton.layer.borderColor = ColorScheme.Orange.cgColor
+            }
+        }
+    }
     
     var colorPickerButton: UIButton!
     
@@ -42,6 +56,8 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         
         setupColorPickerButton()
         setupUndoPickerButton()
+        setupRedoButton()
+        setupRubberButton()
     }
     
     func setupColorPickerButton() {
@@ -64,6 +80,26 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         undoButton.addTarget(self, action: #selector(DrawingViewController.undoTapped), for: .touchUpInside)
         undoButton.setImage(UIImage(named: "undo"), for: .normal)
         undoBarButton.customView = undoButton
+    }
+    
+    func setupRedoButton() {
+        let redoButton = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+        redoButton.addTarget(self, action: #selector(DrawingViewController.redoTapped), for: .touchUpInside)
+        redoButton.setImage(UIImage(named: "redo"), for: .normal)
+        redoBarButton.customView = redoButton
+    }
+    
+    func setupRubberButton() {
+        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        let rubberButton = UIButton(frame: CGRect(x: 5, y: 5, width: 30, height: 30))
+        rubberButton.addTarget(self, action: #selector(DrawingViewController.rubberTapped), for: .touchUpInside)
+        rubberButton.setImage(UIImage(named: "eraser"), for: .normal)
+        containerView.addSubview(rubberButton)
+        containerView.layer.cornerRadius = 20
+        containerView.layer.borderColor = UIColor.clear.cgColor
+        containerView.layer.borderWidth = 3
+        
+        rubberBarButton.customView = containerView
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -250,6 +286,11 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         
         let context = UIGraphicsGetCurrentContext()
         drawingImageView.draw(CGRect(origin: CGPoint(x: 0, y: 0), size: drawingImageView.bounds.size))
+        
+        if isRubberMode {
+            context?.setBlendMode(.clear)
+        }
+        
         context?.setStrokeColor(currentColor.cgColor)
         context?.setLineWidth(currentBrushSize)
         context?.setLineCap(.round)
@@ -281,5 +322,14 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
             lastSeriesImages.removeLast()
         }
     }
+    
+    func redoTapped() {
+        print("redo")
+    }
+    
+    func rubberTapped(_ sender: Any) {
+        isRubberMode = !isRubberMode
+    }
+    
 }
 
