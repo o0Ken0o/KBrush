@@ -15,7 +15,8 @@ protocol ColorPickerDelegate {
 class ColorPicker: UIView {
     var gradientView: UIView!
     var colorWheelImageView: UIImageView!
-    var thicknessView: UIView!
+    var finalColorNThicknessView: UIView!
+    var adjustThicknessV: UIView!
     
     var gradient: CAGradientLayer!
     var colorWheelRadius: CGFloat!
@@ -23,19 +24,25 @@ class ColorPicker: UIView {
     
     var colorMarker: UIView!
     var brightnessMarker: UIView!
+    var thicknessMarker: UIView!
     
     var colorPicked: UIColor!
     var brightnessPicked: CGFloat?
+    var thicknessPicked: CGFloat!
     
     var isDraggingColorWheel = false
     var isDraggingAlphaMarker = false
+    var isDraggingThicknessMarker = false
     
     var delegate: ColorPickerDelegate?
+    
+    let MAX_THICKNESS: CGFloat = 42
     
     init(frame: CGRect, currentColor: UIColor) {
         super.init(frame: frame)
         
         colorPicked = currentColor
+        thicknessPicked = 5
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(ColorPicker.handleGesture(_:)))
         self.addGestureRecognizer(tapGesture)
@@ -68,6 +75,7 @@ class ColorPicker: UIView {
         colorMarker.backgroundColor = colorPicked
         colorMarker.center = CGPoint(x: colorWheelImageView.bounds.width / 2.0, y: colorWheelImageView.bounds.height / 2.0)
         colorWheelImageView.addSubview(colorMarker)
+        self.addSubview(colorWheelImageView)
         
         let gradientViewFrame = CGRect(x: 0, y: colorWheelImageView.frame.origin.y + colorWheelImageView.bounds.height + 40, width: self.bounds.width * 0.8, height: 20)
         gradientView = UIView(frame: gradientViewFrame)
@@ -84,17 +92,18 @@ class ColorPicker: UIView {
         brightnessMarker.layer.borderColor = UIColor.black.cgColor
         brightnessMarker.layer.borderWidth = thickness
         gradientView.addSubview(brightnessMarker)
-        
-        var thicknessFrame = self.frame
-        thicknessFrame.size.width *= 0.8
-        thicknessFrame.size.height = 40
-        thicknessFrame.origin.x = frame.width * 0.1
-        thicknessFrame.origin.y = self.center.y - colorWheelRadius - 20 - 40
-        thicknessView = UIView(frame: thicknessFrame)
-        
-        self.addSubview(colorWheelImageView)
         self.addSubview(gradientView)
-        self.addSubview(thicknessView)
+        
+        var finalColorFrame = self.frame
+        finalColorFrame.size.width *= 0.8
+        finalColorFrame.size.height = 40
+        finalColorFrame.origin.x = frame.width * 0.1
+        finalColorFrame.origin.y = self.center.y - colorWheelRadius - 20 - 40
+        finalColorNThicknessView = UIView(frame: finalColorFrame)
+        
+        self.addSubview(finalColorNThicknessView)
+        
+        setupAdjustThicknessView()
         
         let hue = UnsafeMutablePointer<CGFloat>.allocate(capacity: 1)
         let saturation = UnsafeMutablePointer<CGFloat>.allocate(capacity: 1)
@@ -112,12 +121,51 @@ class ColorPicker: UIView {
         let brightnessY = gradientView.bounds.height / 2.0
         updateBrightnessMarker(CGPoint(x: brightnessX, y: brightnessY))
         
-        thicknessView.backgroundColor = colorPicked
+        finalColorNThicknessView.backgroundColor = colorPicked
         
         hue.deallocate(capacity: 1)
         saturation.deallocate(capacity: 1)
         brightness.deallocate(capacity: 1)
         alpha.deallocate(capacity: 1)
+    }
+    
+    func setupAdjustThicknessView() {
+        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: self.bounds.width * 0.8, height: 40))
+        
+        let thicknessPath = UIBezierPath()
+        thicknessPath.move(to: CGPoint(x: 0, y: 20))
+        thicknessPath.addLine(to: CGPoint(x: self.bounds.width * 0.8, y: 40))
+        thicknessPath.addLine(to: CGPoint(x: self.bounds.width * 0.8, y: 0))
+        thicknessPath.addLine(to: CGPoint(x: 0, y: 20))
+        
+        adjustThicknessV = UIView(frame: CGRect(x: 0, y: 0, width: self.bounds.width * 0.8, height: 40))
+        let thicknessMask = CAShapeLayer()
+        thicknessMask.frame = adjustThicknessV.frame
+        thicknessMask.path = thicknessPath.cgPath
+        adjustThicknessV.layer.mask = thicknessMask
+        adjustThicknessV.backgroundColor = UIColor.black
+        
+        thicknessMarker = UIView(frame: CGRect(x: 0, y: 0, width: 42, height: MAX_THICKNESS))
+        thicknessMarker.backgroundColor = UIColor.lightGray
+        let thicknessMarkerPath = UIBezierPath()
+        let thicknessHalf: CGFloat = 5
+        thicknessMarkerPath.move(to: CGPoint(x:21 - thicknessHalf, y: 42))
+        thicknessMarkerPath.addLine(to: CGPoint(x: 21 - thicknessHalf, y: 0))
+        thicknessMarkerPath.addLine(to: CGPoint(x: 21 + thicknessHalf, y: 0))
+        thicknessMarkerPath.addLine(to: CGPoint(x: 21 + thicknessHalf, y: 42))
+        thicknessMarkerPath.addLine(to: CGPoint(x: 21 - thicknessHalf, y: 42))
+        let thicknessMarkerMask = CAShapeLayer()
+        thicknessMarkerMask.frame = thicknessMarker.frame
+        thicknessMarkerMask.path = thicknessMarkerPath.cgPath
+        thicknessMarker.layer.mask = thicknessMarkerMask
+        
+        containerView.addSubview(adjustThicknessV)
+        containerView.center = gradientView.center
+        containerView.center.y += 60
+        
+        containerView.addSubview(thicknessMarker)
+        
+        self.addSubview(containerView)
     }
     
     func handleGesture(_ recognizer: UIGestureRecognizer) {
@@ -133,13 +181,18 @@ class ColorPicker: UIView {
             if isWithinGradientView(gradientPt) {
                 updateBrightnessMarker(gradientPt)
             }
+            
+            let thicknessPt = tap.location(in: self.adjustThicknessV)
+            if isWithinAdjustThicknessV(thicknessPt) {
+                updateThicknessMarker(thicknessPt)
+            }
         }
         
         if let pan = recognizer as? UIPanGestureRecognizer {
             
             let wheelPt = pan.location(in: self.colorWheelImageView)
             if isWithinColorWheel(wheelPt) {
-                if !isDraggingAlphaMarker {
+                if !isDraggingAlphaMarker && !isDraggingThicknessMarker {
                     isDraggingColorWheel = true
                     let boundaryPt = findIntersectingPtWithColorWheelCircle(wheelPt)
                     updateColorMarker(boundaryPt)
@@ -153,7 +206,7 @@ class ColorPicker: UIView {
             
             let gradientPt = pan.location(in: gradientView)
             if isWithinGradientView(gradientPt) {
-                if !isDraggingColorWheel {
+                if !isDraggingColorWheel && !isDraggingThicknessMarker {
                     isDraggingAlphaMarker = true
                     let boundaryPt = findPtIntersectingGradientView(gradientPt)
                     updateBrightnessMarker(boundaryPt)
@@ -165,9 +218,24 @@ class ColorPicker: UIView {
                 }
             }
             
+            let thicknessPt = pan.location(in: adjustThicknessV)
+            if isWithinAdjustThicknessV(thicknessPt) {
+                if !isDraggingColorWheel && !isDraggingAlphaMarker {
+                    isDraggingThicknessMarker = true
+                    let boundaryPt = findPtIntersectingAdjustThicknessV(thicknessPt)
+                    updateThicknessMarker(boundaryPt)
+                }
+            } else {
+                if isDraggingThicknessMarker {
+                    let boundaryPt = findPtIntersectingAdjustThicknessV(thicknessPt)
+                    updateThicknessMarker(boundaryPt)
+                }
+            }
+            
             if pan.state == .ended {
                 isDraggingColorWheel = false
                 isDraggingAlphaMarker = false
+                isDraggingThicknessMarker = false
                 
                 let boundaryPt = findPtIntersectingGradientView(brightnessMarker.center)
                 colorPicked = getPixelColorAtPoint(point: boundaryPt, sourceView: gradientView)
@@ -176,10 +244,35 @@ class ColorPicker: UIView {
         }
     }
     
+    func updateFinalColorNThicknessView() {
+        
+        finalColorNThicknessView.backgroundColor = colorPicked
+        
+        let thicknessHalf: CGFloat = thicknessPicked / 2.0
+        let parentsThickness: CGFloat = finalColorNThicknessView.bounds.height
+        let parentsThicknessHalf: CGFloat = parentsThickness / 2.0
+        let parentsWidth: CGFloat = finalColorNThicknessView.bounds.width
+        
+        let path = UIBezierPath()
+        path.move(to: CGPoint(x: 0, y: 0 + (parentsThicknessHalf - thicknessHalf)))
+        path.addLine(to: CGPoint(x: parentsWidth, y: 0 + (parentsThicknessHalf - thicknessHalf)))
+        path.addLine(to: CGPoint(x: parentsWidth, y: thicknessPicked + (parentsThicknessHalf - thicknessHalf)))
+        path.addLine(to: CGPoint(x: 0, y: thicknessPicked + (parentsThicknessHalf - thicknessHalf)))
+        path.addLine(to: CGPoint(x: 0, y: 0 + (parentsThicknessHalf - thicknessHalf)))
+        
+        let mask = CAShapeLayer()
+        mask.frame = finalColorNThicknessView.bounds
+        mask.path = path.cgPath
+        
+        finalColorNThicknessView.layer.mask = mask
+        
+    }
+    
     func updateColorMarker(_ cgPoint: CGPoint) {
         setColorMarkerColor(cgPoint)
         positionColorMark(cgPoint)
         updateColorPicked()
+        updateFinalColorNThicknessView()
     }
     
     func setColorMarkerColor(_ cgPoint: CGPoint) {
@@ -195,8 +288,7 @@ class ColorPicker: UIView {
     }
     
     func updateColorPicked() {
-        let tempColorChose = getPixelColorAtPoint(point: brightnessMarker.center, sourceView: gradientView)
-        thicknessView.backgroundColor = tempColorChose
+        colorPicked = getPixelColorAtPoint(point: brightnessMarker.center, sourceView: gradientView)
     }
     
     func findIntersectingPtWithColorWheelCircle(_ cgPoint: CGPoint) -> CGPoint {
@@ -222,6 +314,7 @@ class ColorPicker: UIView {
     func updateBrightnessMarker(_ cgPoint: CGPoint) {
         positionAlphaMark(cgPoint)
         updateColorPicked()
+        updateFinalColorNThicknessView()
     }
     
     func positionAlphaMark(_ cgPoint: CGPoint) {
@@ -235,6 +328,40 @@ class ColorPicker: UIView {
         let rightBound = gradientView.bounds.width - offset
         let topBound = gradientView.bounds.height - offset
         let bottomBound = gradientView.bounds.origin.y + offset
+        
+        var newX = cgPoint.x
+        newX = newX <= leftBound ? leftBound : newX
+        newX = newX >= rightBound ? rightBound : newX
+        
+        var newY = cgPoint.y
+        newY = newY <= bottomBound ? bottomBound : newY
+        newY = newY >= topBound ? topBound : newY
+        
+        return CGPoint(x: newX, y: newY)
+    }
+    
+    func updateThicknessMarker(_ cgPoint: CGPoint) {
+        positionThicknessMarker(cgPoint)
+        updateThicknessPicked()
+        updateFinalColorNThicknessView()
+    }
+    
+    func updateThicknessPicked() {
+        thicknessPicked = thicknessMarker.center.x / adjustThicknessV.bounds.width * MAX_THICKNESS
+        print("thicknessPicked: \(thicknessPicked!)")
+    }
+    
+    func positionThicknessMarker(_ cgPoint: CGPoint) {
+        thicknessMarker.center.x = cgPoint.x
+    }
+    
+    func findPtIntersectingAdjustThicknessV(_ cgPoint: CGPoint) -> CGPoint {
+        // this offset is used to handle boundary pt
+        let offset: CGFloat = 1
+        let leftBound = adjustThicknessV.bounds.origin.x + offset
+        let rightBound = adjustThicknessV.bounds.width - offset
+        let topBound = adjustThicknessV.bounds.height - offset
+        let bottomBound = adjustThicknessV.bounds.origin.y + offset
         
         var newX = cgPoint.x
         newX = newX <= leftBound ? leftBound : newX
@@ -265,6 +392,18 @@ class ColorPicker: UIView {
         let rightBound = gradientView.bounds.width
         let topBound = gradientView.bounds.height
         let bottomBound = gradientView.bounds.origin.y
+        
+        let isWithinX = cgPoint.x >= leftBound && cgPoint.x <= rightBound
+        let isWithinY = cgPoint.y >= bottomBound && cgPoint.y <= topBound
+        
+        return isWithinX && isWithinY
+    }
+    
+    func isWithinAdjustThicknessV(_ cgPoint: CGPoint) -> Bool {
+        let leftBound = adjustThicknessV.bounds.origin.x
+        let rightBound = adjustThicknessV.bounds.width
+        let topBound = adjustThicknessV.bounds.height
+        let bottomBound = adjustThicknessV.bounds.origin.y
         
         let isWithinX = cgPoint.x >= leftBound && cgPoint.x <= rightBound
         let isWithinY = cgPoint.y >= bottomBound && cgPoint.y <= topBound
