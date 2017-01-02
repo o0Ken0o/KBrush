@@ -12,7 +12,6 @@
 		1F74A6F71DF53A710073314D /* ColorScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F74A6F61DF53A710073314D /* ColorScheme.swift */; };
 		1F74A6F91DF5620A0073314D /* GalleryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F74A6F81DF5620A0073314D /* GalleryTableViewCell.swift */; };
 		1F74A6FC1DF563E00073314D /* CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F74A6FB1DF563E00073314D /* CoreDataHelper.swift */; };
-		1F74A7001DF5B6980073314D /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F74A6FF1DF5B6980073314D /* SettingsViewController.swift */; };
 		1FA73EC81DF453B700282BE9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA73EC71DF453B700282BE9 /* AppDelegate.swift */; };
 		1FA73ECA1DF453B700282BE9 /* DrawingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA73EC91DF453B700282BE9 /* DrawingViewController.swift */; };
 		1FA73ECD1DF453B700282BE9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1FA73ECB1DF453B700282BE9 /* Main.storyboard */; };
@@ -29,7 +28,6 @@
 		1F74A6F61DF53A710073314D /* ColorScheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorScheme.swift; sourceTree = "<group>"; };
 		1F74A6F81DF5620A0073314D /* GalleryTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryTableViewCell.swift; sourceTree = "<group>"; };
 		1F74A6FB1DF563E00073314D /* CoreDataHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataHelper.swift; sourceTree = "<group>"; };
-		1F74A6FF1DF5B6980073314D /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		1FA73EC41DF453B700282BE9 /* Brush.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Brush.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1FA73EC71DF453B700282BE9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1FA73EC91DF453B700282BE9 /* DrawingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingViewController.swift; sourceTree = "<group>"; };
@@ -75,7 +73,6 @@
 			children = (
 				1F74A6F11DF5211B0073314D /* GalleryViewController.swift */,
 				1FA73EC91DF453B700282BE9 /* DrawingViewController.swift */,
-				1F74A6FF1DF5B6980073314D /* SettingsViewController.swift */,
 				39D228081E190862006C67B6 /* ColorPickerViewController.swift */,
 			);
 			name = Controller;
@@ -206,7 +203,6 @@
 				1FA73ED01DF453B700282BE9 /* Brush.xcdatamodeld in Sources */,
 				39D228071E190704006C67B6 /* ColorPicker.swift in Sources */,
 				1FA73EC81DF453B700282BE9 /* AppDelegate.swift in Sources */,
-				1F74A7001DF5B6980073314D /* SettingsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

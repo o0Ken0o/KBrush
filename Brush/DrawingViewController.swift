@@ -9,31 +9,18 @@
 import UIKit
 import CoreData
 
-class DrawingViewController: UIViewController, GalleryViewControllerDelegate, SettingsViewControllerDelegate, ColorPickerViewDelegate {
+class DrawingViewController: UIViewController, GalleryViewControllerDelegate, ColorPickerViewDelegate {
 
     @IBOutlet weak var drawingImageView: UIImageView!
-    @IBOutlet weak var topStackView: UIStackView!
-    @IBOutlet weak var brushSize: UIButton!
-    @IBOutlet weak var brushSizeLabel: UILabel!
     @IBOutlet weak var moreBarButton: UIBarButtonItem!
     @IBOutlet weak var colorPickerBarButton: UIBarButtonItem!
+    @IBOutlet weak var undoBarButton: UIBarButtonItem!
     
     var colorPickerButton: UIButton!
     
-    private var currentColor: UIColor = ColorScheme.Red {
-        didSet {
-//            brushSize.setTitleColor(currentColor, for: .normal)
-            brushSizeLabel.textColor = currentColor
-        }
-    }
+    private var currentColor: UIColor = ColorScheme.Red
     
-    private var currentBrushSize: CGFloat = 1.0 {
-        didSet {
-//            brushSize.setTitle("\(Int(currentBrushSize))", for: .normal)
-            brushSizeLabel.text = "\(Int(currentBrushSize))"
-        }
-    }
-    
+    private var currentBrushSize: CGFloat = 1.0
     private var firstPoint = CGPoint(x: 0, y: 0)
     private var secondPoint = CGPoint(x: 0, y: 0)
     
@@ -53,6 +40,11 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
         self.drawingImageView.backgroundColor = ColorScheme.PaleYellow
         initializeImageContextBGColor()
         
+        setupColorPickerButton()
+        setupUndoPickerButton()
+    }
+    
+    func setupColorPickerButton() {
         let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
         colorPickerButton = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
         colorPickerButton.backgroundColor = currentColor
@@ -67,6 +59,13 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
         colorPickerBarButton.customView = containerView
     }
     
+    func setupUndoPickerButton() {
+        let undoButton = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+        undoButton.addTarget(self, action: #selector(DrawingViewController.undoTapped), for: .touchUpInside)
+        undoButton.setImage(UIImage(named: "undo"), for: .normal)
+        undoBarButton.customView = undoButton
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if let masterpiece = currentMasterPiece {
@@ -79,26 +78,13 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
             let galleryVC = segue.destination as! GalleryViewController
             galleryVC.delegate = self
         }
-        
-        if segue.identifier == "SettingsViewController" {
-            let settingsVC = segue.destination as! SettingsViewController
-            settingsVC.customBrushSize = currentBrushSize
-            settingsVC.customColor = currentColor
-            settingsVC.delegate = self
-        }
-        
+                
         if segue.identifier == "ColorPickerViewController" {
             let colorPickerVC = segue.destination as! ColorPickerViewController
             colorPickerVC.delegate = self
             colorPickerVC.colorSelected = currentColor
             colorPickerVC.thicknessSelected = currentBrushSize
         }
-    }
-    
-    // MARK: SettingsViewControllerDelegate
-    func changeBrushSizeOrColor(settingsVC: SettingsViewController, brushSize: CGFloat, brushColor: UIColor) {
-        currentBrushSize = brushSize
-        currentColor = brushColor
     }
     
     // MARK: ColorPickerViewDelegate
@@ -127,9 +113,6 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
     // MARK: touches method
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         lastSeriesImages.append(drawingImageView.image)
-        UIView.animate(withDuration: 0.5) {
-            self.topStackView.layer.opacity = 0.0
-        }
         
         if let touch = touches.first {
             firstPoint = touch.location(in: drawingImageView)
@@ -151,10 +134,6 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
             secondPoint = touch.location(in: drawingImageView)
             drawALine(first: firstPoint, second: secondPoint)
             firstPoint = secondPoint
-        }
-        
-        UIView.animate(withDuration: 0.5) {
-            self.topStackView.layer.opacity = 1.0
         }
     }
     
@@ -292,53 +271,15 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
         UIGraphicsEndImageContext()
     }
     
-    func setStrokeColor(color: UIColor) {
-        currentColor = color
-//        brushSize.titleLabel?.textColor = color
-        brushSizeLabel.textColor = color
+    func colorPickerTapped() {
+        performSegue(withIdentifier: "ColorPickerViewController", sender: nil)
     }
     
-    
-    @IBAction func changeColorTapped(_ sender: UIButton) {
-        switch sender.tag {
-        case 0:
-            setStrokeColor(color: ColorScheme.Red)
-        case 1:
-            setStrokeColor(color: ColorScheme.Orange)
-        case 2:
-            setStrokeColor(color: ColorScheme.Yellow)
-        case 3:
-            setStrokeColor(color: ColorScheme.Green)
-        case 4:
-            setStrokeColor(color: ColorScheme.Blue)
-        case 5:
-            setStrokeColor(color: ColorScheme.Purple)
-        default:
-            setStrokeColor(color: currentColor)
-        }
-    }
-    
-    @IBAction func randomColor(_ sender: UIButton) {
-        let random = ColorScheme.Random
-        print(random)
-        setStrokeColor(color: random)
-        print("currentColor:\(currentColor)")
-    }
-    
-    @IBAction func redo(_ sender: UIButton) {
+    func undoTapped() {
         if let last = lastSeriesImages.last {
             drawingImageView.image = last
             lastSeriesImages.removeLast()
         }
-    }
-    
-    @IBAction func changeBrushSize(_ sender: UIButton) {
-        print("changeBrushSize")
-        performSegue(withIdentifier: "SettingsViewController", sender: nil)
-    }
-    
-    func colorPickerTapped() {
-        performSegue(withIdentifier: "ColorPickerViewController", sender: nil)
     }
 }
 
