@@ -20,7 +20,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
     
     var colorPickerButton: UIButton!
     
-    private var currentColor: UIColor = ColorScheme.Blue {
+    private var currentColor: UIColor = ColorScheme.Red {
         didSet {
 //            brushSize.setTitleColor(currentColor, for: .normal)
             brushSizeLabel.textColor = currentColor
@@ -57,7 +57,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
         colorPickerButton = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
         colorPickerButton.backgroundColor = currentColor
         colorPickerButton.layer.cornerRadius = 20
-        colorPickerButton.layer.borderColor = UIColor.black.cgColor
+        colorPickerButton.layer.borderColor = ColorScheme.Orange.cgColor
         colorPickerButton.layer.borderWidth = 3
         colorPickerButton.addTarget(self, action: #selector(DrawingViewController.colorPickerTapped), for: .touchUpInside)
         let imageView = UIImageView(frame: CGRect(x: 5, y: 5, width: 30, height: 30))

@@ -110,11 +110,12 @@ class ColorPicker: UIView {
         let brightness = UnsafeMutablePointer<CGFloat>.allocate(capacity: 1)
         let alpha = UnsafeMutablePointer<CGFloat>.allocate(capacity: 1)
         colorPicked.getHue(hue, saturation: saturation, brightness: brightness, alpha: alpha)
-        
-        let r = Double((colorWheelRadius - 1.0) * saturation.pointee)
-        let angleReflectedAlongX = Double(hue.pointee) * M_PI * 2
-        let selectedX = r * cos(angleReflectedAlongX) + Double(colorWheelRadius - 1.0)
-        let selectedY = r * sin(angleReflectedAlongX) * (-1) + Double(colorWheelRadius - 1.0)
+                
+        let r = Double(colorWheelRadius * saturation.pointee)
+        // add 37 degrees due to the image of the color wheel has been rotated a bit
+        let angleReflectedAlongX = Double(hue.pointee) * M_PI * 2 + 37 * M_PI / 180
+        let selectedX = r * cos(angleReflectedAlongX) + Double(colorWheelRadius)
+        let selectedY = r * sin(angleReflectedAlongX) * (-1) + Double(colorWheelRadius)
         updateColorMarker(CGPoint(x: selectedX, y: selectedY))
         
         let brightnessX = gradientView.bounds.width * (1.0 - brightness.pointee)
@@ -176,16 +177,19 @@ class ColorPicker: UIView {
             let wheelPt = tap.location(in: self.colorWheelImageView)
             if isWithinColorWheel(wheelPt) {
                 updateColorMarker(wheelPt)
+                delegate?.selected(color: colorPicked, thickness: thicknessPicked)
             }
             
             let gradientPt = tap.location(in: gradientView)
             if isWithinGradientView(gradientPt) {
                 updateBrightnessMarker(gradientPt)
+                delegate?.selected(color: colorPicked, thickness: thicknessPicked)
             }
             
             let thicknessPt = tap.location(in: self.adjustThicknessV)
             if isWithinAdjustThicknessV(thicknessPt) {
                 updateThicknessMarker(thicknessPt)
+                delegate?.selected(color: colorPicked, thickness: thicknessPicked)
             }
         }
         
@@ -238,8 +242,6 @@ class ColorPicker: UIView {
                 isDraggingAlphaMarker = false
                 isDraggingThicknessMarker = false
                 
-                let boundaryPt = findPtIntersectingGradientView(brightnessMarker.center)
-                colorPicked = getPixelColorAtPoint(point: boundaryPt, sourceView: gradientView)
                 delegate?.selected(color: colorPicked, thickness: thicknessPicked)
             }
         }
