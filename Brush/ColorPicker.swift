@@ -15,6 +15,7 @@ protocol ColorPickerDelegate {
 class ColorPicker: UIView {
     var gradientView: UIView!
     var colorWheelImageView: UIImageView!
+    var thicknessView: UIView!
     
     var gradient: CAGradientLayer!
     var colorWheelRadius: CGFloat!
@@ -84,8 +85,16 @@ class ColorPicker: UIView {
         brightnessMarker.layer.borderWidth = thickness
         gradientView.addSubview(brightnessMarker)
         
+        var thicknessFrame = self.frame
+        thicknessFrame.size.width *= 0.8
+        thicknessFrame.size.height = 40
+        thicknessFrame.origin.x = frame.width * 0.1
+        thicknessFrame.origin.y = self.center.y - colorWheelRadius - 20 - 40
+        thicknessView = UIView(frame: thicknessFrame)
+        
         self.addSubview(colorWheelImageView)
         self.addSubview(gradientView)
+        self.addSubview(thicknessView)
         
         let hue = UnsafeMutablePointer<CGFloat>.allocate(capacity: 1)
         let saturation = UnsafeMutablePointer<CGFloat>.allocate(capacity: 1)
@@ -97,11 +106,13 @@ class ColorPicker: UIView {
         let angleReflectedAlongX = Double(hue.pointee) * M_PI * 2
         let selectedX = r * cos(angleReflectedAlongX) + Double(colorWheelRadius - 1.0)
         let selectedY = r * sin(angleReflectedAlongX) * (-1) + Double(colorWheelRadius - 1.0)
-        positionColorMark(CGPoint(x: selectedX, y: selectedY))
+        updateColorMarker(CGPoint(x: selectedX, y: selectedY))
         
         let brightnessX = gradientView.bounds.width * (1.0 - brightness.pointee)
         let brightnessY = gradientView.bounds.height / 2.0
-        positionAlphaMark(CGPoint(x: brightnessX, y: brightnessY))
+        updateBrightnessMarker(CGPoint(x: brightnessX, y: brightnessY))
+        
+        thicknessView.backgroundColor = colorPicked
         
         hue.deallocate(capacity: 1)
         saturation.deallocate(capacity: 1)
@@ -115,12 +126,12 @@ class ColorPicker: UIView {
             
             let wheelPt = tap.location(in: self.colorWheelImageView)
             if isWithinColorWheel(wheelPt) {
-                positionColorMark(wheelPt)
+                updateColorMarker(wheelPt)
             }
             
             let gradientPt = tap.location(in: gradientView)
             if isWithinGradientView(gradientPt) {
-                positionAlphaMark(gradientPt)
+                updateBrightnessMarker(gradientPt)
             }
         }
         
@@ -130,12 +141,13 @@ class ColorPicker: UIView {
             if isWithinColorWheel(wheelPt) {
                 if !isDraggingAlphaMarker {
                     isDraggingColorWheel = true
-                    positionColorMark(wheelPt)
+                    let boundaryPt = findIntersectingPtWithColorWheelCircle(wheelPt)
+                    updateColorMarker(boundaryPt)
                 }
             } else {
                 if isDraggingColorWheel {
                     let boundaryPt = findIntersectingPtWithColorWheelCircle(wheelPt)
-                    positionColorMark(boundaryPt)
+                    updateColorMarker(boundaryPt)
                 }
             }
             
@@ -143,12 +155,13 @@ class ColorPicker: UIView {
             if isWithinGradientView(gradientPt) {
                 if !isDraggingColorWheel {
                     isDraggingAlphaMarker = true
-                    positionAlphaMark(gradientPt)
+                    let boundaryPt = findPtIntersectingGradientView(gradientPt)
+                    updateBrightnessMarker(boundaryPt)
                 }
             } else {
                 if isDraggingAlphaMarker {
                     let boundaryPt = findPtIntersectingGradientView(gradientPt)
-                    positionAlphaMark(boundaryPt)
+                    updateBrightnessMarker(boundaryPt)
                 }
             }
             
@@ -156,19 +169,34 @@ class ColorPicker: UIView {
                 isDraggingColorWheel = false
                 isDraggingAlphaMarker = false
                 
-                let colorSelected = getPixelColorAtPoint(point: brightnessMarker.center, sourceView: gradientView)
-                delegate?.colorSelected(color: colorSelected)
+                let boundaryPt = findPtIntersectingGradientView(brightnessMarker.center)
+                colorPicked = getPixelColorAtPoint(point: boundaryPt, sourceView: gradientView)
+                delegate?.colorSelected(color: colorPicked)
             }
         }
     }
     
-    func positionColorMark(_ cgPoint: CGPoint) {
+    func updateColorMarker(_ cgPoint: CGPoint) {
+        setColorMarkerColor(cgPoint)
+        positionColorMark(cgPoint)
+        updateColorPicked()
+    }
+    
+    func setColorMarkerColor(_ cgPoint: CGPoint) {
         colorMarker.isHidden = true
         let color = getPixelColorAtPoint(point: cgPoint, sourceView: self.colorWheelImageView)
         colorMarker.isHidden = false
         colorMarker.backgroundColor = color
-        colorMarker.center = cgPoint
         setGradientColor(color: color)
+    }
+    
+    func positionColorMark(_ cgPoint: CGPoint) {
+        colorMarker.center = cgPoint
+    }
+    
+    func updateColorPicked() {
+        let tempColorChose = getPixelColorAtPoint(point: brightnessMarker.center, sourceView: gradientView)
+        thicknessView.backgroundColor = tempColorChose
     }
     
     func findIntersectingPtWithColorWheelCircle(_ cgPoint: CGPoint) -> CGPoint {
@@ -180,7 +208,7 @@ class ColorPicker: UIView {
             // handle the case at the boundary, always get black color at the boundary point
             // therefore, we need to get the point that is close to the boundary point instead
             // we find the point by using point of division
-            let offset: CGFloat = 1.0
+            let offset: CGFloat = 2.0
             let lineSegment = distance - (colorWheelRadius - offset)
             let newX = (colorWheelCenter.x * lineSegment + cgPoint.x * (colorWheelRadius - offset)) / distance
             let newY = (colorWheelCenter.y * lineSegment + cgPoint.y * (colorWheelRadius - offset)) / distance
@@ -191,15 +219,22 @@ class ColorPicker: UIView {
         return cgPoint
     }
     
+    func updateBrightnessMarker(_ cgPoint: CGPoint) {
+        positionAlphaMark(cgPoint)
+        updateColorPicked()
+    }
+    
     func positionAlphaMark(_ cgPoint: CGPoint) {
         brightnessMarker.center.x = cgPoint.x
     }
     
     func findPtIntersectingGradientView(_ cgPoint: CGPoint) -> CGPoint {
-        let leftBound = gradientView.bounds.origin.x
-        let rightBound = gradientView.bounds.width
-        let topBound = gradientView.bounds.height
-        let bottomBound = gradientView.bounds.origin.y
+        // this offset is used to handle boundary pt
+        let offset: CGFloat = 1
+        let leftBound = gradientView.bounds.origin.x + offset
+        let rightBound = gradientView.bounds.width - offset
+        let topBound = gradientView.bounds.height - offset
+        let bottomBound = gradientView.bounds.origin.y + offset
         
         var newX = cgPoint.x
         newX = newX <= leftBound ? leftBound : newX

@@ -20,7 +20,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
     
     var colorPickerButton: UIButton!
     
-    private var currentColor: UIColor = ColorScheme.Black {
+    private var currentColor: UIColor = ColorScheme.Blue {
         didSet {
 //            brushSize.setTitleColor(currentColor, for: .normal)
             brushSizeLabel.textColor = currentColor
@@ -53,11 +53,18 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Se
         self.drawingImageView.backgroundColor = ColorScheme.PaleYellow
         initializeImageContextBGColor()
         
-        colorPickerButton = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
-        colorPickerButton.backgroundColor = UIColor.black
-        colorPickerButton.layer.cornerRadius = 15
+        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        colorPickerButton = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        colorPickerButton.backgroundColor = currentColor
+        colorPickerButton.layer.cornerRadius = 20
+        colorPickerButton.layer.borderColor = UIColor.black.cgColor
+        colorPickerButton.layer.borderWidth = 3
         colorPickerButton.addTarget(self, action: #selector(DrawingViewController.colorPickerTapped), for: .touchUpInside)
-        colorPickerBarButton.customView = colorPickerButton
+        let imageView = UIImageView(frame: CGRect(x: 5, y: 5, width: 30, height: 30))
+        imageView.image = UIImage(named: "paint-brush")
+        containerView.addSubview(colorPickerButton)
+        containerView.addSubview(imageView)
+        colorPickerBarButton.customView = containerView
     }
     
     override func viewWillAppear(_ animated: Bool) {
