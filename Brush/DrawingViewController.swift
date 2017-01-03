@@ -39,7 +39,8 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     private var firstPoint = CGPoint(x: 0, y: 0)
     private var secondPoint = CGPoint(x: 0, y: 0)
     
-    private var lastSeriesImages = [UIImage?]()
+    private var undoImages = [UIImage?]()
+    private var redoImages = [UIImage?]()
     
     var currentMasterPiece: Masterpiece? {
         didSet {
@@ -161,7 +162,16 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     
     // MARK: touches method
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        lastSeriesImages.append(drawingImageView.image)
+        
+        if redoImages.count > 0 {
+            undoImages.append(drawingImageView.image)
+            for image in redoImages {
+                undoImages.append(image)
+            }
+            redoImages.removeAll()
+        }
+        
+        undoImages.append(drawingImageView.image)
         
         if let touch = touches.first {
             firstPoint = touch.location(in: drawingImageView)
@@ -330,14 +340,19 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     }
     
     func undoTapped() {
-        if let last = lastSeriesImages.last {
+        if let last = undoImages.last {
+            redoImages.append(drawingImageView.image)
             drawingImageView.image = last
-            lastSeriesImages.removeLast()
+            undoImages.removeLast()
         }
     }
     
     func redoTapped() {
-        print("redo")
+        if let last = redoImages.last {
+            undoImages.append(drawingImageView.image)
+            drawingImageView.image = last
+            redoImages.removeLast()
+        }
     }
     
     func rubberTapped(_ sender: Any) {
