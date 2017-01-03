@@ -18,6 +18,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     @IBOutlet weak var redoBarButton: UIBarButtonItem!
     @IBOutlet weak var rubberBarButton: UIBarButtonItem!
     
+    
     var isRubberMode: Bool = false {
         didSet {
             if isRubberMode {
@@ -58,6 +59,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         setupUndoPickerButton()
         setupRedoButton()
         setupRubberButton()
+        setupMoreButton()
     }
     
     func setupColorPickerButton() {
@@ -100,6 +102,17 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         containerView.layer.borderWidth = 3
         
         rubberBarButton.customView = containerView
+    }
+    
+    func setupMoreButton() {
+        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        let moreButton = UIButton(frame: CGRect(x: 5, y: 5, width: 30, height: 30))
+        moreButton.addTarget(self, action: #selector(DrawingViewController.moreTapped), for: .touchUpInside)
+        moreButton.setImage(UIImage(named: "more"), for: .normal)
+        containerView.addSubview(moreButton)
+        containerView.layer.cornerRadius = 20
+        
+        moreBarButton.customView = containerView
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -174,7 +187,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     }
     
     // MARK: Customized Methods
-    @IBAction func moreTapped(_ sender: UIBarButtonItem) {
+    func moreTapped() {
         let alertController = UIAlertController(title: "Menu", message: "", preferredStyle: .actionSheet)
         
         let newAction = UIAlertAction(title: "New", style: .default, handler: { (alert) in
@@ -199,7 +212,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         
         // these two settings are for iPad devices
         alertController.popoverPresentationController?.sourceView = self.view
-        alertController.popoverPresentationController?.sourceRect = ((sender.value(forKey: "view") as? UIView)?.frame)!
+        alertController.popoverPresentationController?.sourceRect = ((moreBarButton.value(forKey: "view") as? UIView)?.frame)!
         
         present(alertController, animated: true, completion: nil)
     }

@@ -74,11 +74,7 @@
                             </connections>
                         </barButtonItem>
                         <rightBarButtonItems>
-                            <barButtonItem image="more" id="hpH-Mo-g3M">
-                                <connections>
-                                    <action selector="moreTapped:" destination="BYZ-38-t0r" id="98O-hv-ZPK"/>
-                                </connections>
-                            </barButtonItem>
+                            <barButtonItem title="Mo" id="hpH-Mo-g3M"/>
                             <barButtonItem title="T" id="LEj-QF-qGT"/>
                             <barButtonItem title="T" id="pqU-R2-jej"/>
                             <barButtonItem title="Re" id="5LZ-dC-aKG"/>
@@ -197,6 +193,5 @@
     </scenes>
     <resources>
         <image name="menu" width="30" height="30"/>
-        <image name="more" width="30" height="30"/>
     </resources>
 </document>
