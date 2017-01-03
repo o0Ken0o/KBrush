@@ -79,9 +79,11 @@
                             <barButtonItem title="T" id="pqU-R2-jej"/>
                             <barButtonItem title="Re" id="5LZ-dC-aKG"/>
                             <barButtonItem title="Rub" id="ups-wx-rzW"/>
+                            <barButtonItem title="Pen" id="4eZ-k8-DMs"/>
                         </rightBarButtonItems>
                     </navigationItem>
                     <connections>
+                        <outlet property="brushBarButton" destination="4eZ-k8-DMs" id="NaV-Wr-tXG"/>
                         <outlet property="colorPickerBarButton" destination="LEj-QF-qGT" id="5ZA-cp-Mnn"/>
                         <outlet property="drawingImageView" destination="Vuy-Fr-DU9" id="MQO-dO-JAU"/>
                         <outlet property="moreBarButton" destination="hpH-Mo-g3M" id="Quu-LH-CtW"/>
@@ -115,7 +117,7 @@
                                         <rect key="frame" x="0.0" y="28" width="320" height="150"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="huk-YY-BRb" id="Pdq-md-xS8">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="149"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="149.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="CoP-K6-W0T">

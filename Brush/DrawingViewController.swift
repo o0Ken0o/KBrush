@@ -17,16 +17,16 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     @IBOutlet weak var undoBarButton: UIBarButtonItem!
     @IBOutlet weak var redoBarButton: UIBarButtonItem!
     @IBOutlet weak var rubberBarButton: UIBarButtonItem!
-    
+    @IBOutlet weak var brushBarButton: UIBarButtonItem!
     
     var isRubberMode: Bool = false {
         didSet {
             if isRubberMode {
                 rubberBarButton.customView?.layer.borderColor = ColorScheme.Orange.cgColor
-                colorPickerButton.layer.borderColor = UIColor.clear.cgColor
+                brushBarButton.customView?.layer.borderColor = UIColor.clear.cgColor
             } else {
                 rubberBarButton.customView?.layer.borderColor = UIColor.clear.cgColor
-                colorPickerButton.layer.borderColor = ColorScheme.Orange.cgColor
+                brushBarButton.customView?.layer.borderColor = ColorScheme.Orange.cgColor
             }
         }
     }
@@ -61,6 +61,20 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         setupRedoButton()
         setupRubberButton()
         setupMoreButton()
+        setupBrushButton()
+    }
+    
+    func setupBrushButton() {
+        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        let brushButton = UIButton(frame: CGRect(x: 7, y: 7, width: 26, height: 26))
+        brushButton.addTarget(self, action: #selector(DrawingViewController.brushTapped), for: .touchUpInside)
+        brushButton.setImage(UIImage(named: "paint-brush"), for: .normal)
+        containerView.addSubview(brushButton)
+        containerView.layer.cornerRadius = 20
+        containerView.layer.borderColor = ColorScheme.Orange.cgColor
+        containerView.layer.borderWidth = 3
+        
+        brushBarButton.customView = containerView
     }
     
     func setupColorPickerButton() {
@@ -71,10 +85,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         colorPickerButton.layer.borderColor = ColorScheme.Orange.cgColor
         colorPickerButton.layer.borderWidth = 3
         colorPickerButton.addTarget(self, action: #selector(DrawingViewController.colorPickerTapped), for: .touchUpInside)
-        let imageView = UIImageView(frame: CGRect(x: 5, y: 5, width: 30, height: 30))
-        imageView.image = UIImage(named: "paint-brush")
         containerView.addSubview(colorPickerButton)
-        containerView.addSubview(imageView)
         colorPickerBarButton.customView = containerView
     }
     
@@ -355,8 +366,12 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         }
     }
     
-    func rubberTapped(_ sender: Any) {
-        isRubberMode = !isRubberMode
+    func rubberTapped() {
+        isRubberMode = true
+    }
+    
+    func brushTapped() {
+        isRubberMode = false
     }
     
 }
