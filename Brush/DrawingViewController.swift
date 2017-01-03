@@ -10,6 +10,10 @@ import UIKit
 import CoreData
 
 class DrawingViewController: UIViewController, GalleryViewControllerDelegate, ColorPickerViewDelegate {
+    
+    // TODO: warn the user if there are unsave changes when the user does something else like
+    //       sharing or choosing another masterpiece
+    // TODO: implement cameraTapped
 
     @IBOutlet weak var drawingImageView: UIImageView!
     @IBOutlet weak var moreBarButton: UIBarButtonItem!
@@ -18,6 +22,9 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     @IBOutlet weak var redoBarButton: UIBarButtonItem!
     @IBOutlet weak var rubberBarButton: UIBarButtonItem!
     @IBOutlet weak var brushBarButton: UIBarButtonItem!
+    
+    var toolBar: UIView!
+    var toolBarOverlayView: UIView!
     
     var isRubberMode: Bool = false {
         didSet {
@@ -46,7 +53,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         didSet {
             if let masterpiece = currentMasterPiece {
                 self.drawingImageView.image = UIImage(data: (masterpiece.image as! Data))
-                self.title = masterpiece.name
+                //self.title = masterpiece.name
             }
         }
     }
@@ -62,6 +69,91 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         setupRubberButton()
         setupMoreButton()
         setupBrushButton()
+        
+        setupToolBar()
+    }
+    
+    func setupToolBar() {
+        let space: CGFloat = 15.0
+        var noOfItems = 0
+        let toolBarWidth: CGFloat = 40
+        let buttonWidth: CGFloat = 30
+        
+        var coordY = space
+        let coordX: CGFloat = (toolBarWidth - buttonWidth) / 2
+        
+        let addNewButton = UIButton(frame: CGRect(x: coordX, y: coordY, width: buttonWidth, height: buttonWidth))
+        addNewButton.setImage(UIImage(named: "plus"), for: .normal)
+        addNewButton.addTarget(self, action: #selector(DrawingViewController.addNewTapped), for: .touchUpInside)
+        
+        noOfItems += 1
+        coordY += buttonWidth + space
+        
+        let cameraButton = UIButton(frame: CGRect(x: coordX, y: coordY, width: buttonWidth, height: buttonWidth))
+        cameraButton.setImage(UIImage(named: "camera"), for: .normal)
+        cameraButton.addTarget(self, action: #selector(DrawingViewController.cameraTapped), for: .touchUpInside)
+        
+        noOfItems += 1
+        coordY += buttonWidth + space
+        
+        let saveButton = UIButton(frame: CGRect(x: coordX, y: coordY, width: buttonWidth, height: buttonWidth))
+        saveButton.setImage(UIImage(named: "save"), for: .normal)
+        saveButton.addTarget(self, action: #selector(DrawingViewController.saveTapped), for: .touchUpInside)
+        
+        noOfItems += 1
+        coordY += buttonWidth + space
+        
+        let shareButton = UIButton(frame: CGRect(x: coordX, y: coordY, width: buttonWidth, height: buttonWidth))
+        shareButton.setImage(UIImage(named: "share"), for: .normal)
+        shareButton.addTarget(self, action: #selector(DrawingViewController.shareTapped), for: .touchUpInside)
+        
+        noOfItems += 1
+        coordY += buttonWidth + space
+        
+        toolBar = UIView(frame: CGRect(x: 0, y: -200, width: toolBarWidth, height: buttonWidth * CGFloat(noOfItems) + CGFloat(noOfItems + 1) * space))
+        toolBar.center.x = (moreBarButton.customView?.center.x)!
+        toolBar.backgroundColor = ColorScheme.Yellow
+        toolBar.layer.cornerRadius = toolBarWidth / 2.0
+        
+        toolBar.addSubview(addNewButton)
+        toolBar.addSubview(cameraButton)
+        toolBar.addSubview(saveButton)
+        toolBar.addSubview(shareButton)
+        
+        
+        toolBarOverlayView = UIView(frame: (self.navigationController?.view.frame)!)
+        
+        let shadowView = UIView(frame: (self.navigationController?.view.frame)!)
+        shadowView.backgroundColor = ColorScheme.PaleYellow
+        
+        toolBarOverlayView.addSubview(shadowView)
+        toolBarOverlayView.isHidden = true
+        toolBarOverlayView.alpha = 0
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(DrawingViewController.hideToolBar))
+        toolBarOverlayView.addGestureRecognizer(tap)
+        
+        
+        self.navigationController?.view.addSubview(toolBarOverlayView)
+        self.navigationController?.view.addSubview(toolBar)
+        
+    }
+    
+    func showToolBar() {
+        self.toolBarOverlayView.isHidden = false
+        UIView.animate(withDuration: 0.5, animations: {
+            self.toolBar.frame.origin.y = 64 + 10
+            self.toolBarOverlayView.alpha = 0.7
+        })
+    }
+    
+    func hideToolBar() {
+        UIView.animate(withDuration: 0.5, animations: { 
+            self.toolBar.frame.origin.y = -200
+            self.toolBarOverlayView.alpha = 0
+        }) { (finished) in
+            self.toolBarOverlayView.isHidden = true
+        }
     }
     
     func setupBrushButton() {
@@ -130,7 +222,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if let masterpiece = currentMasterPiece {
-            self.title = masterpiece.name
+            //self.title = masterpiece.name
         }
     }
     
@@ -165,7 +257,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
             if masterpiece.objectID == objectId {
                 currentMasterPiece = nil
                 drawingImageView.image = nil
-                self.title = ""
+                //self.title = ""
                 initializeImageContextBGColor()
             }
         }
@@ -209,33 +301,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     
     // MARK: Customized Methods
     func moreTapped() {
-        let alertController = UIAlertController(title: "Menu", message: "", preferredStyle: .actionSheet)
-        
-        let newAction = UIAlertAction(title: "New", style: .default, handler: { (alert) in
-            self.addNewMasterpiece()
-        })
-        alertController.addAction(newAction)
-        
-        let saveAction = UIAlertAction(title: "Save", style: .default, handler: {(alert :UIAlertAction!) in
-            self.saveMasterPiece()
-        })
-        alertController.addAction(saveAction)
-        
-        let shareAction = UIAlertAction(title: "Share", style: .default, handler: {(alert :UIAlertAction!) in
-            self.shareMasterPiece()
-        })
-        alertController.addAction(shareAction)
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (alert) in
-            // do nothing
-        })
-        alertController.addAction(cancelAction)
-        
-        // these two settings are for iPad devices
-        alertController.popoverPresentationController?.sourceView = self.view
-        alertController.popoverPresentationController?.sourceRect = ((moreBarButton.value(forKey: "view") as? UIView)?.frame)!
-        
-        present(alertController, animated: true, completion: nil)
+        showToolBar()
     }
     
     func saveMasterPiece() {
@@ -253,7 +319,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
             let oKAction = UIAlertAction(title: "OK", style: .default, handler: { (alert) in
                 let textField = alertC.textFields?[0]
                 self.currentMasterPiece = CoreDataHelper.sharedInstance.createAMasterpiece(image: self.drawingImageView.image!, name: (textField?.text)!)
-                self.title = self.currentMasterPiece?.name
+                //self.title = self.currentMasterPiece?.name
             })
             alertC.addAction(oKAction)
             
@@ -273,7 +339,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
             let oKAction = UIAlertAction(title: "OK", style: .default, handler: { (alert) in
                 let textField = alertC.textFields?[0]
                 CoreDataHelper.sharedInstance.updateAMasterpiece(masterpiece: self.currentMasterPiece!, newImage: self.drawingImageView.image!, newName:  (textField?.text)!)
-                self.title = self.currentMasterPiece?.name
+                //self.title = self.currentMasterPiece?.name
             })
             alertC.addAction(oKAction)
             
@@ -308,7 +374,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     }
     
     func addNewMasterpiece() {
-        self.title = ""
+        //self.title = ""
         self.drawingImageView.image = nil
         self.currentMasterPiece = nil
         initializeImageContextBGColor()
@@ -364,6 +430,33 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
             drawingImageView.image = last
             redoImages.removeLast()
         }
+    }
+    
+    func addNewTapped() {
+        hideToolBar()
+        addNewMasterpiece()
+    }
+    
+    func cameraTapped() {
+        hideToolBar()
+        
+        let alertVC = UIAlertController(title: "Coming Soon", message: "Import photos feature is coming soon", preferredStyle: .alert)
+        
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        
+        alertVC.addAction(okAction)
+        
+        present(alertVC, animated: true, completion: nil)
+    }
+    
+    func saveTapped() {
+        hideToolBar()
+        saveMasterPiece()
+    }
+    
+    func shareTapped() {
+        hideToolBar()
+        shareMasterPiece()
     }
     
     func rubberTapped() {

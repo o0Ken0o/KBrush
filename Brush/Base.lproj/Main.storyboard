@@ -23,7 +23,7 @@
                     <view key="view" contentMode="scaleToFill" id="Vcu-Qh-0ww">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="0.84313725490000002" blue="0.0" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                     <navigationItem key="navigationItem" id="EUZ-jn-WRV">
                         <barButtonItem key="leftBarButtonItem" title="Cancel" id="rGc-Tq-njG">
@@ -134,7 +134,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
-                                            <color key="backgroundColor" red="1" green="0.84441432825306117" blue="0.0" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="backgroundColor" red="1" green="0.84313725490196079" blue="0.0" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
                                             <constraints>
                                                 <constraint firstAttribute="bottom" secondItem="CoP-K6-W0T" secondAttribute="bottom" constant="10" id="GJw-xT-qFm"/>
                                                 <constraint firstItem="CoP-K6-W0T" firstAttribute="leading" secondItem="Pdq-md-xS8" secondAttribute="leading" constant="20" id="Mp5-mR-Zzi"/>

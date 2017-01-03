@@ -21,6 +21,8 @@ class ColorPickerViewController: UIViewController, ColorPickerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.view.backgroundColor = ColorScheme.PaleYellow
+        
         let colorPickerView = ColorPicker(frame: self.view.frame, currentColor: colorSelected, currentThickness: thicknessSelected)
         colorPickerView.delegate = self
         self.view.addSubview(colorPickerView)
