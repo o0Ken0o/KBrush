@@ -29,13 +29,15 @@ class GalleryViewController: UIViewController, UITableViewDelegate, UITableViewD
         masterpieces = CoreDataHelper.sharedInstance.getAllMasterpieces()
         
         self.galleryTableView.backgroundColor = ColorScheme.PaleYellow
+        
+        setupCloseBt()
     }
 
     //MARK: UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         galleryTableView.deselectRow(at: indexPath, animated: true)
         delegate?.selectedAMasterpiece(galleryVC: self, masterpiece: masterpieces[indexPath.row])
-        _ = self.navigationController?.popViewController(animated: true)
+        dismiss(animated: true, completion: nil)
     }
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
@@ -73,5 +75,32 @@ class GalleryViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
         cell.masterpieceNameLabel.text = masterpiece.name
         return cell
+    }
+    
+    // MARK: Customized Methods
+    func setupCloseBt() {
+        let buttonWidth: CGFloat = 20
+        let buttonViewWidth = buttonWidth + 10
+        
+        let closeButton = UIButton(frame: CGRect(x: 0, y: 0, width: buttonWidth, height: buttonWidth))
+        closeButton.setImage(UIImage(named: "cross"), for: .normal)
+        closeButton.addTarget(self, action: #selector(GalleryViewController.exit), for: .touchUpInside)
+        
+        let closeButtonView = UIView(frame: CGRect(x: 0, y: 0, width: buttonViewWidth, height: buttonViewWidth))
+        closeButtonView.addSubview(closeButton)
+        
+        closeButton.center = closeButtonView.center
+        
+        closeButtonView.backgroundColor = UIColor.white
+        closeButtonView.frame.origin = CGPoint(x: self.view.bounds.width - buttonViewWidth - 20, y: 20)
+        closeButtonView.layer.cornerRadius = buttonViewWidth / 2
+        closeButtonView.layer.borderColor = ColorScheme.Orange.cgColor
+        closeButtonView.layer.borderWidth = 3
+        
+        self.view.addSubview(closeButtonView)
+    }
+    
+    func exit() {
+        dismiss(animated: true, completion: nil)
     }
 }

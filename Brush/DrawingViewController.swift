@@ -16,23 +16,20 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     // TODO: implement cameraTapped
 
     @IBOutlet weak var drawingImageView: UIImageView!
-    @IBOutlet weak var moreBarButton: UIBarButtonItem!
-    @IBOutlet weak var colorPickerBarButton: UIBarButtonItem!
-    @IBOutlet weak var undoBarButton: UIBarButtonItem!
-    @IBOutlet weak var redoBarButton: UIBarButtonItem!
-    @IBOutlet weak var rubberBarButton: UIBarButtonItem!
-    @IBOutlet weak var brushBarButton: UIBarButtonItem!
     
+    var horizontalToolBar: UIView!
+    
+    // horizontal toolBar
     var brushButtonView: UIView!
     var eraserButtonView: UIView!
     var redoButtonView: UIView!
     var undoButtonView: UIView!
     var colorPickerButtonView: UIView!
+    var moreButtonView: UIView!
+    var noOfHorizontalButtons = 0
     
+    // verticle toolBar
     var verticleToolBar: UIView!
-    var verticleToolBarOverlayView: UIView!
-    
-    var horizontalToolBar: UIView!
     
     var isRubberMode: Bool = false {
         didSet {
@@ -81,15 +78,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     
     func setupHorizontalToolBar() {
         
-//        setupColorPickerButton()
-//        setupUndoPickerButton()
-//        setupRedoButton()
-//        setupRubberButton()
-//        setupMoreButton()
-//        setupBrushButton()
-        
         let space: CGFloat = 10
-        var noOfItems = 0
         let buttonWidth: CGFloat = 26
         let btContainerViewWidth = buttonWidth + 10
         let horizontalToolBarHeight: CGFloat = btContainerViewWidth + 2 * 6
@@ -104,7 +93,9 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         brushButtonView.addSubview(brushButton)
         brushButtonView.backgroundColor = UIColor.white
         brushButtonView.layer.cornerRadius = btContainerViewWidth / 2
-        noOfItems += 1
+        brushButtonView.layer.borderWidth = 3
+        brushButtonView.layer.borderColor = ColorScheme.Orange.cgColor
+        noOfHorizontalButtons += 1
         coordX += btContainerViewWidth + space
         
         eraserButtonView = UIView(frame: CGRect(x: coordX, y: coordY, width: btContainerViewWidth, height: btContainerViewWidth))
@@ -114,7 +105,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         eraserButtonView.addSubview(eraserButton)
         eraserButtonView.backgroundColor = UIColor.white
         eraserButtonView.layer.cornerRadius = btContainerViewWidth / 2
-        noOfItems += 1
+        noOfHorizontalButtons += 1
         coordX += btContainerViewWidth + space
         
         redoButtonView = UIView(frame: CGRect(x: coordX, y: coordY, width: btContainerViewWidth, height: btContainerViewWidth))
@@ -124,7 +115,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         redoButtonView.addSubview(redoButton)
         redoButtonView.backgroundColor = UIColor.white
         redoButtonView.layer.cornerRadius = btContainerViewWidth / 2
-        noOfItems += 1
+        noOfHorizontalButtons += 1
         coordX += btContainerViewWidth + space
         
         undoButtonView = UIView(frame: CGRect(x: coordX, y: coordY, width: btContainerViewWidth, height: btContainerViewWidth))
@@ -134,7 +125,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         undoButtonView.addSubview(undoButton)
         undoButtonView.backgroundColor = UIColor.white
         undoButtonView.layer.cornerRadius = btContainerViewWidth / 2
-        noOfItems += 1
+        noOfHorizontalButtons += 1
         coordX += btContainerViewWidth + space
         
         colorPickerButtonView = UIView(frame: CGRect(x: coordX, y: coordY, width: btContainerViewWidth, height: btContainerViewWidth))
@@ -145,17 +136,28 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         colorPickerButtonView.backgroundColor = UIColor.white
         colorPickerButtonView.addSubview(colorPickerButton)
         colorPickerButtonView.layer.cornerRadius = btContainerViewWidth / 2
-        noOfItems += 1
+        noOfHorizontalButtons += 1
+        coordX += btContainerViewWidth + space
+        
+        moreButtonView = UIView(frame: CGRect(x: coordX, y: coordY, width: btContainerViewWidth, height: btContainerViewWidth))
+        let moreButton = UIButton(frame: CGRect(x: (btContainerViewWidth - buttonWidth) / 2.0, y: (btContainerViewWidth - buttonWidth) / 2.0, width: buttonWidth, height: buttonWidth))
+        moreButton.setImage(UIImage(named: "more"), for: .normal)
+        moreButton.addTarget(self, action: #selector(DrawingViewController.moreTapped), for: .touchUpInside)
+        moreButtonView.addSubview(moreButton)
+        moreButtonView.backgroundColor = UIColor.white
+        moreButtonView.layer.cornerRadius = btContainerViewWidth / 2
+        noOfHorizontalButtons += 1
         coordX += btContainerViewWidth + space
         
     
-        horizontalToolBar = UIView(frame: CGRect(x: 0, y: 20, width: btContainerViewWidth * CGFloat(noOfItems) + CGFloat(noOfItems + 1) * space, height: horizontalToolBarHeight))
+        horizontalToolBar = UIView(frame: CGRect(x: 0, y: 20, width: btContainerViewWidth * CGFloat(noOfHorizontalButtons) + CGFloat(noOfHorizontalButtons + 1) * space, height: horizontalToolBarHeight))
         
         horizontalToolBar.addSubview(brushButtonView)
         horizontalToolBar.addSubview(eraserButtonView)
         horizontalToolBar.addSubview(redoButtonView)
         horizontalToolBar.addSubview(undoButtonView)
         horizontalToolBar.addSubview(colorPickerButtonView)
+        horizontalToolBar.addSubview(moreButtonView)
         
         horizontalToolBar.backgroundColor = ColorScheme.Yellow
         horizontalToolBar.center.x = self.view.center.x
@@ -164,148 +166,132 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     }
     
     func setupVerticalToolBar() {
-        let space: CGFloat = 15.0
+        let space: CGFloat = 10
         var noOfItems = 0
-        let verticleToolBarWidth: CGFloat = 40
-        let buttonWidth: CGFloat = 30
+        let buttonWidth: CGFloat = 26
+        let btViewWidth = buttonWidth + 10
+        let verticleToolBarWidth = btViewWidth + 2 * 6
         
         var coordY = space
-        let coordX: CGFloat = (verticleToolBarWidth - buttonWidth) / 2
+        let coordX: CGFloat = (verticleToolBarWidth - btViewWidth) / 2
         
         let addNewButton = UIButton(frame: CGRect(x: coordX, y: coordY, width: buttonWidth, height: buttonWidth))
         addNewButton.setImage(UIImage(named: "plus"), for: .normal)
         addNewButton.addTarget(self, action: #selector(DrawingViewController.addNewTapped), for: .touchUpInside)
+        addNewButton.center = CGPoint(x: btViewWidth / 2, y: btViewWidth / 2)
+        let addNewBtView = UIView(frame: CGRect(x: coordX, y: coordY, width: btViewWidth, height: btViewWidth))
+        addNewBtView.layer.cornerRadius = btViewWidth / 2
+        addNewBtView.backgroundColor = UIColor.white
+        addNewBtView.addSubview(addNewButton)
         
         noOfItems += 1
-        coordY += buttonWidth + space
+        coordY += btViewWidth + space
         
         let cameraButton = UIButton(frame: CGRect(x: coordX, y: coordY, width: buttonWidth, height: buttonWidth))
         cameraButton.setImage(UIImage(named: "camera"), for: .normal)
         cameraButton.addTarget(self, action: #selector(DrawingViewController.cameraTapped), for: .touchUpInside)
+        cameraButton.center = CGPoint(x: btViewWidth / 2, y: btViewWidth / 2)
+        let cameraBtView = UIView(frame: CGRect(x: coordX, y: coordY, width: btViewWidth, height: btViewWidth))
+        cameraBtView.layer.cornerRadius = btViewWidth / 2
+        cameraBtView.backgroundColor = UIColor.white
+        cameraBtView.addSubview(cameraButton)
         
         noOfItems += 1
-        coordY += buttonWidth + space
+        coordY += btViewWidth + space
         
         let saveButton = UIButton(frame: CGRect(x: coordX, y: coordY, width: buttonWidth, height: buttonWidth))
         saveButton.setImage(UIImage(named: "save"), for: .normal)
         saveButton.addTarget(self, action: #selector(DrawingViewController.saveTapped), for: .touchUpInside)
+        saveButton.center = CGPoint(x: btViewWidth / 2, y: btViewWidth / 2)
+        let saveBtView = UIView(frame: CGRect(x: coordX, y: coordY, width: btViewWidth, height: btViewWidth))
+        saveBtView.layer.cornerRadius = btViewWidth / 2
+        saveBtView.backgroundColor = UIColor.white
+        saveBtView.addSubview(saveButton)
         
         noOfItems += 1
-        coordY += buttonWidth + space
+        coordY += btViewWidth + space
         
         let shareButton = UIButton(frame: CGRect(x: coordX, y: coordY, width: buttonWidth, height: buttonWidth))
         shareButton.setImage(UIImage(named: "share"), for: .normal)
         shareButton.addTarget(self, action: #selector(DrawingViewController.shareTapped), for: .touchUpInside)
+        shareButton.center = CGPoint(x: btViewWidth / 2, y: btViewWidth / 2)
+        let shareBtView = UIView(frame: CGRect(x: coordX, y: coordY, width: btViewWidth, height: btViewWidth))
+        shareBtView.layer.cornerRadius = btViewWidth / 2
+        shareBtView.backgroundColor = UIColor.white
+        shareBtView.addSubview(shareButton)
         
         noOfItems += 1
-        coordY += buttonWidth + space
+        coordY += btViewWidth + space
         
-        verticleToolBar = UIView(frame: CGRect(x: 200, y: -200, width: verticleToolBarWidth, height: buttonWidth * CGFloat(noOfItems) + CGFloat(noOfItems + 1) * space))
-        verticleToolBar.backgroundColor = ColorScheme.Yellow
+        let galleryButton = UIButton(frame: CGRect(x: coordX, y: coordY, width: buttonWidth, height: buttonWidth))
+        galleryButton.setImage(UIImage(named: "list"), for: .normal)
+        galleryButton.addTarget(self, action: #selector(DrawingViewController.galleryTapped), for: .touchUpInside)
+        galleryButton.center = CGPoint(x: btViewWidth / 2, y: btViewWidth / 2)
+        let galleryBtView = UIView(frame: CGRect(x: coordX, y: coordY, width: btViewWidth, height: btViewWidth))
+        galleryBtView.layer.cornerRadius = btViewWidth / 2
+        galleryBtView.backgroundColor = UIColor.white
+        galleryBtView.addSubview(galleryButton)
+        
+        noOfItems += 1
+        coordY += btViewWidth + space
+        
+        let ftBtsView = UIView(frame: CGRect(x: 0, y: 0, width: verticleToolBarWidth, height: btViewWidth * CGFloat(noOfItems) + CGFloat(noOfItems + 1) * space))
+        ftBtsView.backgroundColor = ColorScheme.Yellow
+        ftBtsView.layer.cornerRadius = verticleToolBarWidth / 2.0
+        
+        ftBtsView.addSubview(addNewBtView)
+        ftBtsView.addSubview(cameraBtView)
+        ftBtsView.addSubview(saveBtView)
+        ftBtsView.addSubview(shareBtView)
+        ftBtsView.addSubview(galleryBtView)
+        
+        coordY += space
+        
+        let nonFtBtWidth = buttonWidth - 10
+        let nonFtBtViewWidth = btViewWidth - 10
+        let nonFtVerticleToolBarWidth = verticleToolBarWidth - 10
+        
+        let hideToolBarBt = UIButton(frame: CGRect(x: 0, y: 0, width: nonFtBtWidth, height: nonFtBtWidth))
+        hideToolBarBt.setImage(UIImage(named: "cross"), for: .normal)
+        hideToolBarBt.addTarget(self, action: #selector(DrawingViewController.hideVerticleToolBar), for: .touchUpInside)
+        hideToolBarBt.center = CGPoint(x: nonFtBtViewWidth / 2, y: nonFtBtViewWidth / 2)
+        let hideToolBarBtView = UIView(frame: CGRect(x: 0, y: 0, width: nonFtBtViewWidth, height: nonFtBtViewWidth))
+        hideToolBarBtView.layer.cornerRadius = nonFtBtViewWidth / 2
+        hideToolBarBtView.backgroundColor = UIColor.white
+        hideToolBarBtView.addSubview(hideToolBarBt)
+        hideToolBarBtView.center = CGPoint(x: nonFtVerticleToolBarWidth / 2, y: nonFtVerticleToolBarWidth / 2)
+        
+        let nonftBtsView = UIView(frame: CGRect(x: 0, y: coordY, width: nonFtVerticleToolBarWidth, height: nonFtVerticleToolBarWidth))
+        nonftBtsView.backgroundColor = ColorScheme.Yellow
+        nonftBtsView.layer.cornerRadius = nonFtVerticleToolBarWidth / 2.0
+        nonftBtsView.center.x = verticleToolBarWidth / 2
+        nonftBtsView.addSubview(hideToolBarBtView)
+        
+        noOfItems += 1
+        coordY += btViewWidth + space
+        
+        verticleToolBar = UIView(frame: CGRect(x: 200, y: -200, width: verticleToolBarWidth, height: btViewWidth * CGFloat(noOfItems) + CGFloat(noOfItems + 1) * space))
         verticleToolBar.layer.cornerRadius = verticleToolBarWidth / 2.0
+        verticleToolBar.frame.origin.x = self.view.bounds.width + verticleToolBar.bounds.width
+        verticleToolBar.center.y = self.view.center.y
+    
+        verticleToolBar.addSubview(ftBtsView)
+        verticleToolBar.addSubview(nonftBtsView)
         
-        verticleToolBar.addSubview(addNewButton)
-        verticleToolBar.addSubview(cameraButton)
-        verticleToolBar.addSubview(saveButton)
-        verticleToolBar.addSubview(shareButton)
-        
-        
-        verticleToolBarOverlayView = UIView(frame: self.view.frame)
-        
-        let shadowView = UIView(frame: self.view.frame)
-        shadowView.backgroundColor = ColorScheme.PaleYellow
-        
-        verticleToolBarOverlayView.addSubview(shadowView)
-        verticleToolBarOverlayView.isHidden = true
-        verticleToolBarOverlayView.alpha = 0
-        
-        let tap = UITapGestureRecognizer(target: self, action: #selector(DrawingViewController.hideverticleToolBar))
-        verticleToolBarOverlayView.addGestureRecognizer(tap)
-        
-        
-        self.view.addSubview(verticleToolBarOverlayView)
         self.view.addSubview(verticleToolBar)
         
     }
     
-    func showverticleToolBar() {
-        self.verticleToolBarOverlayView.isHidden = false
+    func showVerticleToolBar() {
         UIView.animate(withDuration: 0.5, animations: {
-            self.verticleToolBar.frame.origin.y = 64 + 10
-            self.verticleToolBarOverlayView.alpha = 0.7
+            self.verticleToolBar.frame.origin.x = self.view.bounds.width - self.verticleToolBar.bounds.width - 20
         })
     }
     
-    func hideverticleToolBar() {
-        UIView.animate(withDuration: 0.5, animations: { 
-            self.verticleToolBar.frame.origin.y = -200
-            self.verticleToolBarOverlayView.alpha = 0
-        }) { (finished) in
-            self.verticleToolBarOverlayView.isHidden = true
+    func hideVerticleToolBar() {
+        UIView.animate(withDuration: 0.5) {
+            self.verticleToolBar.frame.origin.x = self.view.bounds.width + self.verticleToolBar.bounds.width
         }
-    }
-    
-    func setupBrushButton() {
-        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
-        let brushButton = UIButton(frame: CGRect(x: 7, y: 7, width: 26, height: 26))
-        brushButton.addTarget(self, action: #selector(DrawingViewController.brushTapped), for: .touchUpInside)
-        brushButton.setImage(UIImage(named: "paint-brush"), for: .normal)
-        containerView.addSubview(brushButton)
-        containerView.layer.cornerRadius = 20
-        containerView.layer.borderColor = ColorScheme.Orange.cgColor
-        containerView.layer.borderWidth = 3
-        
-        brushBarButton.customView = containerView
-    }
-    
-    func setupColorPickerButton() {
-        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
-        colorPickerButton = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
-        colorPickerButton.backgroundColor = currentColor
-        colorPickerButton.layer.cornerRadius = 20
-        colorPickerButton.layer.borderColor = ColorScheme.Orange.cgColor
-        colorPickerButton.layer.borderWidth = 3
-        colorPickerButton.addTarget(self, action: #selector(DrawingViewController.colorPickerTapped), for: .touchUpInside)
-        containerView.addSubview(colorPickerButton)
-        colorPickerBarButton.customView = containerView
-    }
-    
-    func setupUndoPickerButton() {
-        let undoButton = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
-        undoButton.addTarget(self, action: #selector(DrawingViewController.undoTapped), for: .touchUpInside)
-        undoButton.setImage(UIImage(named: "undo"), for: .normal)
-        undoBarButton.customView = undoButton
-    }
-    
-    func setupRedoButton() {
-        let redoButton = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
-        redoButton.addTarget(self, action: #selector(DrawingViewController.redoTapped), for: .touchUpInside)
-        redoButton.setImage(UIImage(named: "redo"), for: .normal)
-        redoBarButton.customView = redoButton
-    }
-    
-    func setupRubberButton() {
-        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
-        let rubberButton = UIButton(frame: CGRect(x: 5, y: 5, width: 30, height: 30))
-        rubberButton.addTarget(self, action: #selector(DrawingViewController.rubberTapped), for: .touchUpInside)
-        rubberButton.setImage(UIImage(named: "eraser"), for: .normal)
-        containerView.addSubview(rubberButton)
-        containerView.layer.cornerRadius = 20
-        containerView.layer.borderColor = UIColor.clear.cgColor
-        containerView.layer.borderWidth = 3
-        
-        rubberBarButton.customView = containerView
-    }
-    
-    func setupMoreButton() {
-        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
-        let moreButton = UIButton(frame: CGRect(x: 5, y: 5, width: 30, height: 30))
-        moreButton.addTarget(self, action: #selector(DrawingViewController.moreTapped), for: .touchUpInside)
-        moreButton.setImage(UIImage(named: "more"), for: .normal)
-        containerView.addSubview(moreButton)
-        containerView.layer.cornerRadius = 20
-        
-        moreBarButton.customView = containerView
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -390,7 +376,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     
     // MARK: Customized Methods
     func moreTapped() {
-        showverticleToolBar()
+        showVerticleToolBar()
     }
     
     func saveMasterPiece() {
@@ -455,7 +441,8 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
             // if the users say no, we should ask them to change to settings
             
             // for iPad devices
-            activityController.popoverPresentationController?.barButtonItem = moreBarButton
+            activityController.popoverPresentationController?.sourceView = self.view
+            activityController.popoverPresentationController?.sourceRect = CGRect(origin: CGPoint(x: 0, y: 20), size: CGSize(width: 1, height: 200))
             present(activityController, animated: true, completion: nil)
         } else {
             Utilities.sharedInstance.popAlertView(parentVC: self, title: "Empty Masterpiece", message: "You need to save the masterpiece before sharing it.")
@@ -522,12 +509,12 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     }
     
     func addNewTapped() {
-        hideverticleToolBar()
+//        hideVerticleToolBar()
         addNewMasterpiece()
     }
     
     func cameraTapped() {
-        hideverticleToolBar()
+//        hideVerticleToolBar()
         
         let alertVC = UIAlertController(title: "Coming Soon", message: "Import photos feature is coming soon", preferredStyle: .alert)
         
@@ -539,13 +526,18 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     }
     
     func saveTapped() {
-        hideverticleToolBar()
+//        hideVerticleToolBar()
         saveMasterPiece()
     }
     
     func shareTapped() {
-        hideverticleToolBar()
+//        hideVerticleToolBar()
         shareMasterPiece()
+    }
+    
+    func galleryTapped() {
+//        hideVerticleToolBar()
+        performSegue(withIdentifier: "GalleryViewController", sender: nil)
     }
     
     func rubberTapped() {
@@ -555,6 +547,6 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     func brushTapped() {
         isRubberMode = false
     }
-    
+
 }
 

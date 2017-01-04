@@ -104,7 +104,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="150" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="SXV-as-MVl">
-                                <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                                 <color key="backgroundColor" red="1" green="0.84441432829999996" blue="0.0" alpha="0.18044777684563759" colorSpace="custom" customColorSpace="sRGB"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="galleryTableCell" id="huk-YY-BRb" customClass="GalleryTableViewCell" customModule="Brush" customModuleProvider="target">
@@ -148,10 +148,10 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="SXV-as-MVl" firstAttribute="leading" secondItem="qhp-rS-6wg" secondAttribute="leading" id="UsO-qK-SBW"/>
-                            <constraint firstItem="SXV-as-MVl" firstAttribute="top" secondItem="DzD-fq-yCk" secondAttribute="bottom" id="sQF-RZ-AcC"/>
-                            <constraint firstItem="h38-Z4-PDM" firstAttribute="top" secondItem="SXV-as-MVl" secondAttribute="bottom" id="waz-T3-j4x"/>
-                            <constraint firstAttribute="trailing" secondItem="SXV-as-MVl" secondAttribute="trailing" id="zcN-kh-8cf"/>
+                            <constraint firstAttribute="trailing" secondItem="SXV-as-MVl" secondAttribute="trailing" id="9va-BA-aOY"/>
+                            <constraint firstItem="h38-Z4-PDM" firstAttribute="top" secondItem="SXV-as-MVl" secondAttribute="bottom" id="BEA-28-wJ8"/>
+                            <constraint firstItem="SXV-as-MVl" firstAttribute="top" secondItem="qhp-rS-6wg" secondAttribute="top" id="CCs-Su-cz2"/>
+                            <constraint firstItem="SXV-as-MVl" firstAttribute="leading" secondItem="qhp-rS-6wg" secondAttribute="leading" id="njJ-2n-gQV"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Gallery" id="GdB-rX-Li2"/>
