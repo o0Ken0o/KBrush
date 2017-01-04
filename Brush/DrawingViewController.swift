@@ -14,6 +14,10 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     // TODO: warn the user if there are unsave changes when the user does something else like
     //       sharing or choosing another masterpiece
     // TODO: implement cameraTapped
+    // TODO: the hideToolBarButton is too difficult to be pressed
+    // TODO: add a clearAll button
+    // TODO: if saving to photo library, permission must be asked explicitly beforehand
+    // if the users say no, we should ask them to change to settings
 
     @IBOutlet weak var drawingImageView: UIImageView!
     
@@ -74,6 +78,24 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         
         setupHorizontalToolBar()
         setupVerticalToolBar()
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        hideHorizontalToolBar()
+        showHorizontalToolBar()
+    }
+    
+    func hideHorizontalToolBar() {
+        horizontalToolBar.center.x -= self.view.bounds.width
+    }
+    
+    func showHorizontalToolBar() {
+        UIView.animate(withDuration: 1) {
+            self.horizontalToolBar.center.x = self.view.center.x
+        }
     }
     
     func setupHorizontalToolBar() {
@@ -129,7 +151,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         coordX += btContainerViewWidth + space
         
         colorPickerButtonView = UIView(frame: CGRect(x: coordX, y: coordY, width: btContainerViewWidth, height: btContainerViewWidth))
-        let colorPickerButton = UIButton(frame: CGRect(x: (btContainerViewWidth - buttonWidth) / 2.0, y: (btContainerViewWidth - buttonWidth) / 2.0, width: buttonWidth, height: buttonWidth))
+        colorPickerButton = UIButton(frame: CGRect(x: (btContainerViewWidth - buttonWidth) / 2.0, y: (btContainerViewWidth - buttonWidth) / 2.0, width: buttonWidth, height: buttonWidth))
         colorPickerButton.addTarget(self, action: #selector(DrawingViewController.colorPickerTapped), for: .touchUpInside)
         colorPickerButton.backgroundColor = currentColor
         colorPickerButton.layer.cornerRadius = buttonWidth / 2
@@ -291,13 +313,6 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     func hideVerticleToolBar() {
         UIView.animate(withDuration: 0.5) {
             self.verticleToolBar.frame.origin.x = self.view.bounds.width + self.verticleToolBar.bounds.width
-        }
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        if let masterpiece = currentMasterPiece {
-            //self.title = masterpiece.name
         }
     }
     

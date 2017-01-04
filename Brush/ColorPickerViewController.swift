@@ -26,15 +26,63 @@ class ColorPickerViewController: UIViewController, ColorPickerDelegate {
         let colorPickerView = ColorPicker(frame: self.view.frame, currentColor: colorSelected, currentThickness: thicknessSelected)
         colorPickerView.delegate = self
         self.view.addSubview(colorPickerView)
+        
+        setupCloseBt()
+        setupConfirmBt()
     }
     
-    @IBAction func cancelTapped(_ sender: Any) {
-        _ = self.navigationController?.popViewController(animated: true)
+    // MARK: Customized Methods
+    func setupCloseBt() {
+        let buttonWidth: CGFloat = 20
+        let buttonViewWidth = buttonWidth + 10
+        
+        let closeButton = UIButton(frame: CGRect(x: 0, y: 0, width: buttonWidth, height: buttonWidth))
+        closeButton.setImage(UIImage(named: "cross"), for: .normal)
+        closeButton.addTarget(self, action: #selector(ColorPickerViewController.closeTapped), for: .touchUpInside)
+        
+        let closeButtonView = UIView(frame: CGRect(x: 0, y: 0, width: buttonViewWidth, height: buttonViewWidth))
+        closeButtonView.addSubview(closeButton)
+        
+        closeButton.center = closeButtonView.center
+        
+        closeButtonView.backgroundColor = UIColor.white
+        closeButtonView.frame.origin = CGPoint(x: self.view.bounds.width - buttonViewWidth - 20, y: 30)
+        closeButtonView.layer.cornerRadius = buttonViewWidth / 2
+        closeButtonView.layer.borderColor = ColorScheme.Orange.cgColor
+        closeButtonView.layer.borderWidth = 3
+        
+        self.view.addSubview(closeButtonView)
     }
     
-    @IBAction func confirmTapped(_ sender: Any) {
+    func setupConfirmBt() {
+        let buttonWidth: CGFloat = 20
+        let buttonViewWidth = buttonWidth + 10
+        
+        let confirmButton = UIButton(frame: CGRect(x: 0, y: 0, width: buttonWidth, height: buttonWidth))
+        confirmButton.setImage(UIImage(named: "tick"), for: .normal)
+        confirmButton.addTarget(self, action: #selector(ColorPickerViewController.confirmTapped), for: .touchUpInside)
+        
+        let confirmButtonView = UIView(frame: CGRect(x: 0, y: 0, width: buttonViewWidth, height: buttonViewWidth))
+        confirmButtonView.addSubview(confirmButton)
+        
+        confirmButton.center = confirmButtonView.center
+        
+        confirmButtonView.backgroundColor = UIColor.white
+        confirmButtonView.frame.origin = CGPoint(x: 20, y: 30)
+        confirmButtonView.layer.cornerRadius = buttonViewWidth / 2
+        confirmButtonView.layer.borderColor = ColorScheme.Orange.cgColor
+        confirmButtonView.layer.borderWidth = 3
+        
+        self.view.addSubview(confirmButtonView)
+    }
+    
+    func closeTapped() {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func confirmTapped() {
         delegate?.selected(color: colorSelected, thickness: thicknessSelected)
-        _ = self.navigationController?.popViewController(animated: true)
+        dismiss(animated: true, completion: nil)
     }
     
     func selected(color: UIColor, thickness: CGFloat) {

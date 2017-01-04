@@ -25,18 +25,6 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="0.84313725490000002" blue="0.0" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
-                    <navigationItem key="navigationItem" id="EUZ-jn-WRV">
-                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="rGc-Tq-njG">
-                            <connections>
-                                <action selector="cancelTapped:" destination="5Cd-JQ-X2h" id="zWj-VV-Swc"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Confirm" id="uMz-8t-6ye">
-                            <connections>
-                                <action selector="confirmTapped:" destination="5Cd-JQ-X2h" id="dbJ-hm-z7e"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Oez-zj-ySe" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
