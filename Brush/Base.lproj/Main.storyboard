@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16C68" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="bSJ-z8-V9P">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16C68" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina3_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -55,16 +55,16 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Vuy-Fr-DU9">
-                                <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                                 <color key="backgroundColor" red="1" green="0.84128947881381466" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="Vuy-Fr-DU9" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="B9a-JD-0sR"/>
-                            <constraint firstAttribute="trailing" secondItem="Vuy-Fr-DU9" secondAttribute="trailing" id="WIK-72-EFx"/>
-                            <constraint firstItem="Vuy-Fr-DU9" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="XNf-k0-1dd"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="Vuy-Fr-DU9" secondAttribute="bottom" id="utA-sY-NwO"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="Vuy-Fr-DU9" secondAttribute="bottom" id="52z-ba-Ijx"/>
+                            <constraint firstItem="Vuy-Fr-DU9" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="b1C-LK-M1B"/>
+                            <constraint firstAttribute="trailing" secondItem="Vuy-Fr-DU9" secondAttribute="trailing" id="tL2-yx-7r4"/>
+                            <constraint firstItem="Vuy-Fr-DU9" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="zPh-iW-L27"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="kFK-BS-YO2">
@@ -83,13 +83,7 @@
                         </rightBarButtonItems>
                     </navigationItem>
                     <connections>
-                        <outlet property="brushBarButton" destination="4eZ-k8-DMs" id="NaV-Wr-tXG"/>
-                        <outlet property="colorPickerBarButton" destination="LEj-QF-qGT" id="5ZA-cp-Mnn"/>
                         <outlet property="drawingImageView" destination="Vuy-Fr-DU9" id="MQO-dO-JAU"/>
-                        <outlet property="moreBarButton" destination="hpH-Mo-g3M" id="Quu-LH-CtW"/>
-                        <outlet property="redoBarButton" destination="5LZ-dC-aKG" id="Ezk-ae-Y4A"/>
-                        <outlet property="rubberBarButton" destination="ups-wx-rzW" id="6n0-Bj-a5W"/>
-                        <outlet property="undoBarButton" destination="pqU-R2-jej" id="c9f-In-LpS"/>
                         <segue destination="5Cd-JQ-X2h" kind="show" identifier="ColorPickerViewController" id="adV-jc-bNO"/>
                     </connections>
                 </viewController>
@@ -110,7 +104,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="150" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="SXV-as-MVl">
-                                <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                                <rect key="frame" x="0.0" y="20" width="320" height="460"/>
                                 <color key="backgroundColor" red="1" green="0.84441432829999996" blue="0.0" alpha="0.18044777684563759" colorSpace="custom" customColorSpace="sRGB"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="galleryTableCell" id="huk-YY-BRb" customClass="GalleryTableViewCell" customModule="Brush" customModuleProvider="target">
@@ -168,29 +162,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nV7-OF-dTG" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1980" y="-475"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="4g1-ZS-soY">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="bSJ-z8-V9P" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" opaque="NO" contentMode="scaleToFill" id="BVA-my-DHM">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <color key="tintColor" red="1" green="0.4606451956" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <color key="barTintColor" red="1" green="0.8772321428789116" blue="0.015890731290000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <textAttributes key="titleTextAttributes">
-                            <color key="textColor" red="1" green="0.4606451956" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        </textAttributes>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="7A2-YR-UKW"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Ex3-qf-0Pq" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="228" y="-475"/>
         </scene>
     </scenes>
     <resources>
