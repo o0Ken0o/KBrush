@@ -63,7 +63,7 @@ class ColorPicker: UIView {
         colorWheelFrame.size.height = colorWheelFrame.size.width
         colorWheelImageView = UIImageView(frame: colorWheelFrame)
         colorWheelImageView.image = UIImage(named: "color_wheel")
-        colorWheelImageView.center = self.center
+        colorWheelImageView.center = CGPoint(x: self.bounds.width / 2, y: self.bounds.height / 2)
         
         colorWheelRadius = self.colorWheelImageView.frame.width / 2.0
         colorWheelCenter = CGPoint(x: colorWheelRadius, y: colorWheelRadius)
@@ -80,7 +80,7 @@ class ColorPicker: UIView {
         let gradientViewFrame = CGRect(x: 0, y: colorWheelImageView.frame.origin.y + colorWheelImageView.bounds.height + 40, width: self.bounds.width * 0.8, height: 20)
         gradientView = UIView(frame: gradientViewFrame)
         gradientView.backgroundColor = UIColor.black
-        gradientView.center.x = self.center.x
+        gradientView.center.x = colorWheelImageView.center.x
         
         gradient = CAGradientLayer()
         gradient.frame = gradientView.bounds
@@ -98,7 +98,7 @@ class ColorPicker: UIView {
         finalColorFrame.size.width *= 0.8
         finalColorFrame.size.height = 40
         finalColorFrame.origin.x = frame.width * 0.1
-        finalColorFrame.origin.y = self.center.y - colorWheelRadius - 20 - 40
+        finalColorFrame.origin.y = colorWheelImageView.center.y - colorWheelRadius - 20 - 80
         finalColorNThicknessView = UIView(frame: finalColorFrame)
         
         self.addSubview(finalColorNThicknessView)

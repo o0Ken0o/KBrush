@@ -17,21 +17,56 @@ class ColorPickerViewController: UIViewController, ColorPickerDelegate {
     var delegate: ColorPickerViewDelegate?
     var colorSelected: UIColor!
     var thicknessSelected: CGFloat!
+    var colorPickerView: ColorPicker!
+    
+    var overlayView: UIView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.view.backgroundColor = ColorScheme.PaleYellow
         
-        let colorPickerView = ColorPicker(frame: self.view.frame, currentColor: colorSelected, currentThickness: thicknessSelected)
-        colorPickerView.delegate = self
-        self.view.addSubview(colorPickerView)
-        
+        setupColorPickerView()
         setupCloseBt()
         setupConfirmBt()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        setupOverlayView()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        overlayView.removeFromSuperview()
+    }
+    
+    
     // MARK: Customized Methods
+    func setupOverlayView() {
+        overlayView = UIView(frame: self.view.frame)
+        overlayView.backgroundColor = UIColor.black
+        overlayView.alpha = 0.7
+        self.view.insertSubview(overlayView, belowSubview: colorPickerView)
+    }
+    
+    func setupColorPickerView() {
+        var frame = self.view.frame
+        frame.origin.x += 25
+        frame.origin.y += 40
+        frame.size.width -= 25 * 2
+        frame.size.height -= 40 * 2
+        colorPickerView = ColorPicker(frame: frame, currentColor: colorSelected, currentThickness: thicknessSelected)
+        colorPickerView.delegate = self
+        colorPickerView.layer.cornerRadius = 10
+        colorPickerView.layer.borderColor = ColorScheme.Orange.cgColor
+        colorPickerView.layer.borderWidth = 3
+        colorPickerView.backgroundColor = ColorScheme.PaleYellow
+        self.view.addSubview(colorPickerView)
+    }
+    
     func setupCloseBt() {
         let buttonWidth: CGFloat = 20
         let buttonViewWidth = buttonWidth + 10
@@ -46,7 +81,7 @@ class ColorPickerViewController: UIViewController, ColorPickerDelegate {
         closeButton.center = closeButtonView.center
         
         closeButtonView.backgroundColor = UIColor.white
-        closeButtonView.frame.origin = CGPoint(x: self.view.bounds.width - buttonViewWidth - 20, y: 30)
+        closeButtonView.center = CGPoint(x: colorPickerView.frame.origin.x + colorPickerView.frame.width, y: colorPickerView.frame.origin.y)
         closeButtonView.layer.cornerRadius = buttonViewWidth / 2
         closeButtonView.layer.borderColor = ColorScheme.Orange.cgColor
         closeButtonView.layer.borderWidth = 3
@@ -68,7 +103,7 @@ class ColorPickerViewController: UIViewController, ColorPickerDelegate {
         confirmButton.center = confirmButtonView.center
         
         confirmButtonView.backgroundColor = UIColor.white
-        confirmButtonView.frame.origin = CGPoint(x: 20, y: 30)
+        confirmButtonView.center = colorPickerView.frame.origin
         confirmButtonView.layer.cornerRadius = buttonViewWidth / 2
         confirmButtonView.layer.borderColor = ColorScheme.Orange.cgColor
         confirmButtonView.layer.borderWidth = 3

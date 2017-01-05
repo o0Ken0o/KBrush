@@ -20,6 +20,8 @@ class GalleryViewController: UIViewController, UITableViewDelegate, UITableViewD
     private var masterpieces = [Masterpiece]()
     var delegate: GalleryViewControllerDelegate?
     
+    var overlayView: UIView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -29,8 +31,30 @@ class GalleryViewController: UIViewController, UITableViewDelegate, UITableViewD
         masterpieces = CoreDataHelper.sharedInstance.getAllMasterpieces()
         
         self.galleryTableView.backgroundColor = ColorScheme.PaleYellow
+        self.galleryTableView.layer.cornerRadius = 10
+        self.galleryTableView.layer.borderColor = ColorScheme.Orange.cgColor
+        self.galleryTableView.layer.borderWidth = 3
+        
+        self.view.backgroundColor = ColorScheme.PaleYellow
+        
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
         
         setupCloseBt()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        setupOverlayView()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        overlayView.removeFromSuperview()
     }
 
     //MARK: UITableViewDelegate
@@ -78,6 +102,13 @@ class GalleryViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     // MARK: Customized Methods
+    func setupOverlayView() {
+        overlayView = UIView(frame: self.view.frame)
+        overlayView.backgroundColor = UIColor.black
+        overlayView.alpha = 0.7
+        self.view.insertSubview(overlayView, belowSubview: galleryTableView)
+    }
+    
     func setupCloseBt() {
         let buttonWidth: CGFloat = 20
         let buttonViewWidth = buttonWidth + 10
@@ -92,7 +123,7 @@ class GalleryViewController: UIViewController, UITableViewDelegate, UITableViewD
         closeButton.center = closeButtonView.center
         
         closeButtonView.backgroundColor = UIColor.white
-        closeButtonView.frame.origin = CGPoint(x: self.view.bounds.width - buttonViewWidth - 20, y: 20)
+        closeButtonView.center = CGPoint(x: galleryTableView.frame.origin.x + galleryTableView.bounds.width, y:galleryTableView.frame.origin.y)
         closeButtonView.layer.cornerRadius = buttonViewWidth / 2
         closeButtonView.layer.borderColor = ColorScheme.Orange.cgColor
         closeButtonView.layer.borderWidth = 3

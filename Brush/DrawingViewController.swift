@@ -14,14 +14,16 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     // TODO: warn the user if there are unsave changes when the user does something else like
     //       sharing or choosing another masterpiece
     // TODO: implement cameraTapped
-    // TODO: the hideToolBarButton is too difficult to be pressed
     // TODO: add a clearAll button
     // TODO: if saving to photo library, permission must be asked explicitly beforehand
-    // if the users say no, we should ask them to change to settings
+    // if the users say no, we should ask them to go to settings
 
     @IBOutlet weak var drawingImageView: UIImageView!
     
     var horizontalToolBar: UIView!
+    var isHorizontalToolBarUp = true
+    
+    var isAllowDrawing = true
     
     // horizontal toolBar
     var brushButtonView: UIView!
@@ -30,10 +32,20 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     var undoButtonView: UIView!
     var colorPickerButtonView: UIView!
     var moreButtonView: UIView!
+    var downButton: UIButton!
     var noOfHorizontalButtons = 0
     
     // verticle toolBar
     var verticleToolBar: UIView!
+    var isShowVerticleToolBar = false {
+        didSet {
+            if isShowVerticleToolBar {
+                showVerticleToolBar()
+            } else {
+                hideVerticleToolBar()
+            }
+        }
+    }
     
     var isRubberMode: Bool = false {
         didSet {
@@ -78,30 +90,92 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         
         setupHorizontalToolBar()
         setupVerticalToolBar()
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        hideHorizontalToolBar()
+        hideHorizontalToolBar(animated: false)
         showHorizontalToolBar()
+        
+        if isShowVerticleToolBar {
+            hideVerticleToolBar(animated: false)
+            showVerticleToolBar()
+        }
+        
+        isAllowDrawing = true
     }
     
-    func hideHorizontalToolBar() {
-        horizontalToolBar.center.x -= self.view.bounds.width
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+     
+        hideHorizontalToolBar()
+        
+        if isShowVerticleToolBar {
+            hideVerticleToolBar()
+        }
+        
+        isAllowDrawing = false
     }
     
-    func showHorizontalToolBar() {
-        UIView.animate(withDuration: 1) {
+    func hideHorizontalToolBar(animated: Bool = true) {
+        if animated {
+            UIView.animate(withDuration: 0.7, animations: {
+                self.horizontalToolBar.center.x -= self.view.bounds.width
+            })
+        } else {
+            horizontalToolBar.center.x -= self.view.bounds.width
+        }
+    }
+    
+    func showHorizontalToolBar(animated: Bool = true) {
+        if animated {
+            UIView.animate(withDuration: 0.7) {
+                self.horizontalToolBar.center.x = self.view.center.x
+            }
+        } else {
             self.horizontalToolBar.center.x = self.view.center.x
         }
     }
     
+    func moveHorizontalToolBar() {
+        isHorizontalToolBarUp = !isHorizontalToolBarUp
+        if isHorizontalToolBarUp {
+            moveHorizontalToolBarUp()
+        } else {
+            moveHorizontalToolBarDown()
+        }
+    }
+    
+    func moveHorizontalToolBarDown() {
+        UIView.animate(withDuration: 0.5, animations: {
+            self.horizontalToolBar.center.y = self.view.bounds.height - 40
+            self.downButton.setImage(UIImage(named: "up-arrow"), for: .normal)
+        })
+    }
+    
+    func moveHorizontalToolBarUp() {
+        UIView.animate(withDuration: 0.5, animations: {
+            self.horizontalToolBar.frame.origin.y = 20
+            self.downButton.setImage(UIImage(named: "down-arrow"), for: .normal)
+        })
+    }
+    
     func setupHorizontalToolBar() {
+        // 414 for iPhone 7 Plus
+        // 375 for iPhone 7
+        // 320 for iPhone SE
+        var offset: CGFloat = 0
+        if UIScreen.main.bounds.width >= 330 {
+            offset = 4
+        }
+        if UIScreen.main.bounds.width >= 400 {
+            offset = 10
+        }
+        
         
         let space: CGFloat = 10
-        let buttonWidth: CGFloat = 26
+        let buttonWidth: CGFloat = 22 + offset
         let btContainerViewWidth = buttonWidth + 10
         let horizontalToolBarHeight: CGFloat = btContainerViewWidth + 2 * 6
         
@@ -171,26 +245,67 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         noOfHorizontalButtons += 1
         coordX += btContainerViewWidth + space
         
-    
+        let ftBtsView = UIView(frame: CGRect(x: 0, y: 0, width: btContainerViewWidth * CGFloat(noOfHorizontalButtons) + CGFloat(noOfHorizontalButtons + 1) * space, height: horizontalToolBarHeight))
+        
+        ftBtsView.addSubview(brushButtonView)
+        ftBtsView.addSubview(eraserButtonView)
+        ftBtsView.addSubview(redoButtonView)
+        ftBtsView.addSubview(undoButtonView)
+        ftBtsView.addSubview(colorPickerButtonView)
+        ftBtsView.addSubview(moreButtonView)
+        
+        ftBtsView.backgroundColor = ColorScheme.Yellow
+        ftBtsView.layer.cornerRadius = horizontalToolBarHeight / 2
+        
+        let nonFtBtWidth = buttonWidth - 5
+        let nonFtBtsViewWidth = nonFtBtWidth + 10
+        let nonFtBtsHorizontalToolBarHeight = nonFtBtsViewWidth + 10
+        var nonFtCoodX = coordX + space
+        let nonFtCoodY = (nonFtBtsHorizontalToolBarHeight - nonFtBtsViewWidth) / 2
+        
+        let downButtonView = UIView(frame: CGRect(x: nonFtCoodX, y: nonFtCoodY, width: nonFtBtsViewWidth, height: nonFtBtsViewWidth))
+        downButton = UIButton(frame: CGRect(x: (nonFtBtsViewWidth - nonFtBtWidth) / 2.0, y: (nonFtBtsViewWidth - nonFtBtWidth) / 2.0, width: nonFtBtWidth, height: nonFtBtWidth))
+        downButton.setImage(UIImage(named: "down-arrow"), for: .normal)
+        downButton.addTarget(self, action: #selector(DrawingViewController.moveHorizontalToolBar), for: .touchUpInside)
+        downButtonView.addSubview(downButton)
+        downButtonView.backgroundColor = UIColor.white
+        downButtonView.layer.cornerRadius = nonFtBtsViewWidth / 2
+        downButtonView.center = CGPoint(x: nonFtBtsHorizontalToolBarHeight / 2, y: nonFtBtsHorizontalToolBarHeight / 2)
+        noOfHorizontalButtons += 1
+        
+        let nonFtBtsView = UIView(frame: CGRect(x: nonFtCoodX, y: (horizontalToolBarHeight - nonFtBtsHorizontalToolBarHeight) / 2, width: nonFtBtsHorizontalToolBarHeight, height: nonFtBtsHorizontalToolBarHeight))
+        nonFtBtsView.addSubview(downButtonView)
+        nonFtBtsView.backgroundColor = ColorScheme.Yellow
+        nonFtBtsView.layer.cornerRadius = nonFtBtsHorizontalToolBarHeight / 2
+        
+        nonFtCoodX += nonFtBtsViewWidth + space
+        
+        
         horizontalToolBar = UIView(frame: CGRect(x: 0, y: 20, width: btContainerViewWidth * CGFloat(noOfHorizontalButtons) + CGFloat(noOfHorizontalButtons + 1) * space, height: horizontalToolBarHeight))
         
-        horizontalToolBar.addSubview(brushButtonView)
-        horizontalToolBar.addSubview(eraserButtonView)
-        horizontalToolBar.addSubview(redoButtonView)
-        horizontalToolBar.addSubview(undoButtonView)
-        horizontalToolBar.addSubview(colorPickerButtonView)
-        horizontalToolBar.addSubview(moreButtonView)
+        horizontalToolBar.addSubview(ftBtsView)
+        horizontalToolBar.addSubview(nonFtBtsView)
         
-        horizontalToolBar.backgroundColor = ColorScheme.Yellow
         horizontalToolBar.center.x = self.view.center.x
-        horizontalToolBar.layer.cornerRadius = horizontalToolBarHeight / 2
         self.view.addSubview(horizontalToolBar)
+        
     }
     
     func setupVerticalToolBar() {
+        // 414 for iPhone 7 Plus
+        // 375 for iPhone 7
+        // 320 for iPhone SE
+        var offset: CGFloat = 0
+        if UIScreen.main.bounds.width >= 330 {
+            offset = 4
+        }
+        if UIScreen.main.bounds.width >= 400 {
+            offset = 10
+        }
+        
         let space: CGFloat = 10
         var noOfItems = 0
-        let buttonWidth: CGFloat = 26
+        let buttonWidth: CGFloat = 22 + offset
         let btViewWidth = buttonWidth + 10
         let verticleToolBarWidth = btViewWidth + 2 * 6
         
@@ -269,13 +384,13 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         
         coordY += space
         
-        let nonFtBtWidth = buttonWidth - 10
-        let nonFtBtViewWidth = btViewWidth - 10
-        let nonFtVerticleToolBarWidth = verticleToolBarWidth - 10
+        let nonFtBtWidth = buttonWidth - 5
+        let nonFtBtViewWidth = nonFtBtWidth + 10
+        let nonFtVerticleToolBarWidth = nonFtBtViewWidth + 2 * 6
         
         let hideToolBarBt = UIButton(frame: CGRect(x: 0, y: 0, width: nonFtBtWidth, height: nonFtBtWidth))
         hideToolBarBt.setImage(UIImage(named: "cross"), for: .normal)
-        hideToolBarBt.addTarget(self, action: #selector(DrawingViewController.hideVerticleToolBar), for: .touchUpInside)
+        hideToolBarBt.addTarget(self, action: #selector(DrawingViewController.verticalToolBarCloseButtonTapped), for: .touchUpInside)
         hideToolBarBt.center = CGPoint(x: nonFtBtViewWidth / 2, y: nonFtBtViewWidth / 2)
         let hideToolBarBtView = UIView(frame: CGRect(x: 0, y: 0, width: nonFtBtViewWidth, height: nonFtBtViewWidth))
         hideToolBarBtView.layer.cornerRadius = nonFtBtViewWidth / 2
@@ -304,14 +419,22 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         
     }
     
-    func showVerticleToolBar() {
-        UIView.animate(withDuration: 0.5, animations: {
+    func showVerticleToolBar(animated: Bool = true) {
+        if animated {
+            UIView.animate(withDuration: 0.7, animations: {
+                self.verticleToolBar.frame.origin.x = self.view.bounds.width - self.verticleToolBar.bounds.width - 20
+            })
+        } else {
             self.verticleToolBar.frame.origin.x = self.view.bounds.width - self.verticleToolBar.bounds.width - 20
-        })
+        }
     }
     
-    func hideVerticleToolBar() {
-        UIView.animate(withDuration: 0.5) {
+    func hideVerticleToolBar(animated: Bool = true) {
+        if animated {
+            UIView.animate(withDuration: 0.7) {
+                self.verticleToolBar.frame.origin.x = self.view.bounds.width + self.verticleToolBar.bounds.width
+            }
+        } else {
             self.verticleToolBar.frame.origin.x = self.view.bounds.width + self.verticleToolBar.bounds.width
         }
     }
@@ -356,6 +479,10 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     // MARK: touches method
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
+        if isIgnoreTouches(touches, with: event) {
+            return
+        }
+        
         if redoImages.count > 0 {
             undoImages.append(drawingImageView.image)
             for image in redoImages {
@@ -368,30 +495,56 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         
         if let touch = touches.first {
             firstPoint = touch.location(in: drawingImageView)
-            drawALine(first: firstPoint, second: firstPoint)
+            
+            draw(first: firstPoint, second: firstPoint)
         }
         
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+        if isIgnoreTouches(touches, with: event) {
+            return
+        }
+        
         if let touch = touches.first {
             secondPoint = touch.location(in: drawingImageView)
-            drawALine(first: firstPoint, second: secondPoint)
+            draw(first: firstPoint, second: secondPoint)
             firstPoint = secondPoint
         }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+        if isIgnoreTouches(touches, with: event) {
+            return
+        }
+        
         if let touch = touches.first {
             secondPoint = touch.location(in: drawingImageView)
-            drawALine(first: firstPoint, second: secondPoint)
+            draw(first: firstPoint, second: secondPoint)
             firstPoint = secondPoint
         }
     }
     
+    // MARK: views that ignore touches
+    func isIgnoreTouches(_ touches: Set<UITouch>, with event: UIEvent?) -> Bool {
+        if let touch = touches.first {
+            let hToolBarPt = touch.location(in: horizontalToolBar)
+            let isWithinHToolBar = horizontalToolBar.point(inside: hToolBarPt, with: event)
+            
+            let vToolBarPt = touch.location(in: verticleToolBar)
+            let isWithinVToolBar = verticleToolBar.point(inside: vToolBarPt, with: event)
+            
+            return (isWithinHToolBar || isWithinVToolBar)
+        }
+        
+        return false
+    }
+    
     // MARK: Customized Methods
     func moreTapped() {
-        showVerticleToolBar()
+        isShowVerticleToolBar = true
     }
     
     func saveMasterPiece() {
@@ -465,10 +618,15 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     }
     
     func addNewMasterpiece() {
-        //self.title = ""
         self.drawingImageView.image = nil
         self.currentMasterPiece = nil
         initializeImageContextBGColor()
+    }
+    
+    func draw(first: CGPoint, second: CGPoint) {
+        if isAllowDrawing {
+            drawALine(first: first, second: second)
+        }
     }
     
     func drawALine(first: CGPoint, second: CGPoint) {
@@ -524,12 +682,10 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     }
     
     func addNewTapped() {
-//        hideVerticleToolBar()
         addNewMasterpiece()
     }
     
     func cameraTapped() {
-//        hideVerticleToolBar()
         
         let alertVC = UIAlertController(title: "Coming Soon", message: "Import photos feature is coming soon", preferredStyle: .alert)
         
@@ -541,18 +697,19 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     }
     
     func saveTapped() {
-//        hideVerticleToolBar()
         saveMasterPiece()
     }
     
     func shareTapped() {
-//        hideVerticleToolBar()
         shareMasterPiece()
     }
     
     func galleryTapped() {
-//        hideVerticleToolBar()
         performSegue(withIdentifier: "GalleryViewController", sender: nil)
+    }
+    
+    func verticalToolBarCloseButtonTapped() {
+        isShowVerticleToolBar = false
     }
     
     func rubberTapped() {
