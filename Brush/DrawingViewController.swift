@@ -11,8 +11,6 @@ import CoreData
 
 class DrawingViewController: UIViewController, GalleryViewControllerDelegate, ColorPickerViewDelegate {
     
-    // TODO: warn the user if there are unsave changes when the user does something else like
-    //       sharing or choosing another masterpiece
     // TODO: implement cameraTapped
     // TODO: add a clearAll button
     // TODO: if saving to photo library, permission must be asked explicitly beforehand
@@ -24,6 +22,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     var isHorizontalToolBarUp = true
     
     var isAllowDrawing = true
+    var isUnsaved = false
     
     // horizontal toolBar
     var brushButtonView: UIView!
@@ -78,10 +77,16 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         didSet {
             if let masterpiece = currentMasterPiece {
                 self.drawingImageView.image = UIImage(data: (masterpiece.image as! Data))
-                //self.title = masterpiece.name
             }
+            
+            self.isUnsaved = false
+            undoImages.removeAll()
+            redoImages.removeAll()
         }
     }
+    
+    var masterpieceFromGallery: Masterpiece?
+    var isSelectedMasterpieceFromGallery = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -104,6 +109,10 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         }
         
         isAllowDrawing = true
+        
+        if isSelectedMasterpieceFromGallery {
+            selectedAMasterpieceFromGallery()
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -116,6 +125,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
         }
         
         isAllowDrawing = false
+        isSelectedMasterpieceFromGallery = false
     }
     
     func hideHorizontalToolBar(animated: Bool = true) {
@@ -462,7 +472,8 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     
     // MARK: GalleryViewControllerDelegate
     func selectedAMasterpiece(galleryVC: GalleryViewController, masterpiece: Masterpiece) {
-        self.currentMasterPiece = masterpiece
+        masterpieceFromGallery = masterpiece
+        isSelectedMasterpieceFromGallery = true
     }
     
     func deletedAMasterpiece(galleryVC: GalleryViewController, objectId: NSManagedObjectID) {
@@ -562,7 +573,6 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
             let oKAction = UIAlertAction(title: "OK", style: .default, handler: { (alert) in
                 let textField = alertC.textFields?[0]
                 self.currentMasterPiece = CoreDataHelper.sharedInstance.createAMasterpiece(image: self.drawingImageView.image!, name: (textField?.text)!)
-                //self.title = self.currentMasterPiece?.name
             })
             alertC.addAction(oKAction)
             
@@ -581,7 +591,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
             
             let oKAction = UIAlertAction(title: "OK", style: .default, handler: { (alert) in
                 let textField = alertC.textFields?[0]
-                CoreDataHelper.sharedInstance.updateAMasterpiece(masterpiece: self.currentMasterPiece!, newImage: self.drawingImageView.image!, newName:  (textField?.text)!)
+                self.currentMasterPiece = CoreDataHelper.sharedInstance.updateAMasterpiece(masterpiece: self.currentMasterPiece!, newImage: self.drawingImageView.image!, newName:  (textField?.text)!)
                 //self.title = self.currentMasterPiece?.name
             })
             alertC.addAction(oKAction)
@@ -604,6 +614,11 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     func shareMasterPiece() {
         // if the masterpiece is not saved yet, warn the user
         if let masterpiece = currentMasterPiece {
+            if isUnsaved {
+                Utilities.sharedInstance.popAlertView(parentVC: self, title: "Unsaved Masterpiece", message: "You need to save the masterpiece before sharing it.")
+                return
+            }
+            
             let activityController = UIActivityViewController(activityItems: [masterpiece.image!], applicationActivities: nil)
             // TODO: if saving to photo library, permission must be asked explicitly beforehand
             // if the users say no, we should ask them to change to settings
@@ -626,6 +641,7 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     func draw(first: CGPoint, second: CGPoint) {
         if isAllowDrawing {
             drawALine(first: first, second: second)
+            isUnsaved = true
         }
     }
     
@@ -682,7 +698,22 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     }
     
     func addNewTapped() {
-        addNewMasterpiece()
+        if isUnsaved {
+            let alertVC = UIAlertController(title: "Your current masterpiece is not saved", message: "you still want to create a new one?", preferredStyle: .alert)
+            
+            let yesAction = UIAlertAction(title: "Yes", style: .default, handler: { (alertAction) in
+                self.addNewMasterpiece()
+            })
+            
+            let noAction = UIAlertAction(title: "No", style: .cancel, handler: nil)
+            
+            alertVC.addAction(yesAction)
+            alertVC.addAction(noAction)
+            
+            present(alertVC, animated: true, completion: nil)
+        } else {
+            addNewMasterpiece()
+        }
     }
     
     func cameraTapped() {
@@ -718,6 +749,25 @@ class DrawingViewController: UIViewController, GalleryViewControllerDelegate, Co
     
     func brushTapped() {
         isRubberMode = false
+    }
+    
+    func selectedAMasterpieceFromGallery() {
+        if isUnsaved {
+            let alertVC = UIAlertController(title: "Your current masterpiece is not saved", message: "you still want to switch to another masterpiece", preferredStyle: .alert)
+            
+            let yesAction = UIAlertAction(title: "Yes", style: .default, handler: { (alertAction) in
+                self.currentMasterPiece = self.masterpieceFromGallery
+            })
+            
+            let noAction = UIAlertAction(title: "No", style: .cancel, handler: nil)
+            
+            alertVC.addAction(yesAction)
+            alertVC.addAction(noAction)
+            
+            present(alertVC, animated: true, completion: nil)
+        } else {
+            self.currentMasterPiece = self.masterpieceFromGallery
+        }
     }
 
 }

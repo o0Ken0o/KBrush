@@ -61,7 +61,7 @@ class CoreDataHelper {
         
     }
     
-    func updateAMasterpiece(masterpiece: Masterpiece, newImage: UIImage, newName: String) {
+    func updateAMasterpiece(masterpiece: Masterpiece, newImage: UIImage, newName: String) -> Masterpiece {
         let context = getContext()
         masterpiece.image = NSData(data: UIImagePNGRepresentation(newImage)!)
         masterpiece.name = newName
@@ -72,6 +72,7 @@ class CoreDataHelper {
             print("Could not save \(error), \(error.userInfo)")
         } catch {}
         
+        return masterpiece
     }
     
     func deleteAMasterpiece(masterpiece: Masterpiece) {
